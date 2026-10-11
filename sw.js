@@ -1,6 +1,6 @@
 // Guarda la app en el dispositivo para que abra sin conexión.
 // Al publicar una versión nueva, cambiar el número de VERSION.
-const VERSION = 'eco-uti-2026-10-11';
+const VERSION = 'eco-uti-2026-10-11b';
 const ARCHIVOS = ['./', 'index.html', 'privacidad.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

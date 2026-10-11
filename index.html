@@ -425,6 +425,20 @@ const CALCS=[
  fx:'1. Deslizamiento anterior ausente + líneas A + punto pulmonar → neumotórax\n2. Perfil B (líneas B bilaterales con deslizamiento) → edema pulmonar\n3. Perfil B′, A/B o C → neumonía\n4. Perfil A + trombosis venosa → embolia pulmonar\n5. Perfil A sin trombosis: con PLAPS → neumonía; sin PLAPS → EPOC o asma',
  n:'Estudio observacional en 260 pacientes de terapia intensiva con diagnóstico definido; el algoritmo acertó en 90,5 % al aplicarse en forma retrospectiva. Los perfiles de neumonía por separado son poco sensibles; combinados alcanzan sensibilidad de 89 % y especificidad de 94 %. Limitaciones: no distingue bien edema pulmonar de neumonía intersticial, no detecta embolia sin trombosis visible, y excluyó enfermedad intersticial crónica, derrame masivo y pacientes con más de un diagnóstico. No incluye ecocardiografía. Para neumotórax el resumen informa sensibilidad de 81 % y la tabla 88 %. El análisis venoso abarca yugular interna, subclavia y eje iliofemoropoplíteo.',
  ref:'Lichtenstein y Mezière 2008 (Chest).'},
+{s:'otros',id:'falls',t:'Protocolo FALLS',sub:'Ecografía pulmonar en el shock sin causa evidente',
+ i:[Sel('t','Paso 1 · Derrame pericárdico con taponamiento',[['0','No'],['1','Sí']]),Sel('vd','Paso 2 · Ventrículo derecho dilatado',[['0','No'],['1','Sí']]),Sel('s','Paso 3 · Deslizamiento pulmonar',[['1','Presente'],['0','Ausente']]),Sel('p','Paso 4 · Perfil pulmonar anterior',[['a','Perfil A (líneas A con deslizamiento)'],['b','Perfil B (más de 2 líneas B por espacio, bilateral)']]),Sel('f','Paso 6 · Foco de hipovolemia o sepsis en la ecografía',[['0','No'],['1','Sí']]),Sel('r','Paso 7 · Evolución con fluidos',[['0','Todavía sin fluidos'],['m','Mejora y sigue con perfil A'],['b','Aparecen líneas B sin mejoría clínica']])],
+ f(v){const o=(p,c,d)=>[R('Se detiene en',p,0,'','',d),R('Orientación',c,0,'')];
+  if(v.t==='1')return o('Paso 1','Obstructivo','Taponamiento pericárdico');
+  if(v.vd==='1')return o('Paso 2','Obstructivo','Ventrículo derecho dilatado: pensar primero en embolia pulmonar. La sepsis pulmonar también puede dilatarlo');
+  if(v.s==='0')return o('Paso 3','Obstructivo','Sin deslizamiento no se descarta neumotórax: confirmarlo antes de seguir');
+  if(v.p==='b')return o('Paso 4','Cardiogénico','Perfil B: edema pulmonar hemodinámico. Buscar la causa con eco Doppler');
+  if(v.f==='1')return o('Paso 6','Según el foco','Foco hallado: hipovolémico o séptico. Fluidos por las reglas habituales o hasta que aparezcan líneas B');
+  if(v.r==='m')return o('Paso 7','Hipovolémico','La circulación mejora antes de que el líquido llegue al pulmón');
+  if(v.r==='b')return o('Paso 7','Distributivo','Perfil FALLS: suspender fluidos y mejorar la circulación por otro medio, por ejemplo vasopresores');
+  return o('Paso 5','Dar fluidos','Perfil A: presión de oclusión no elevada. Administrar fluidos con controles pulmonares y clínicos seriados')},
+ fx:'1. Taponamiento pericárdico → obstructivo\n2. Ventrículo derecho dilatado → obstructivo (embolia pulmonar)\n3. Sin deslizamiento → neumotórax\n4. Perfil B → cardiogénico izquierdo\n5. Perfil A → administrar fluidos\n6. Buscar foco de hipovolemia o sepsis\n7. Líneas B nuevas sin mejoría (perfil FALLS) → distributivo; mejoría con perfil A → hipovolémico',
+ n:'Se aplica al ingreso en el shock sin causa evidente. Las líneas B aparecen a partir de una presión de oclusión de la arteria pulmonar de 18 mmHg, por eso el perfil A invita a dar fluidos. El perfil FALLS es el paso de líneas A a líneas B durante la expansión: marca edema septal todavía sin repercusión clínica. Los seis primeros pasos están validados; el séptimo se evaluó en un solo estudio en quirófano contra Doppler esofágico, con sensibilidad de 80 % y especificidad de 57 % para falta de respuesta a fluidos. Limitaciones que señalan los autores: no se puede generar el perfil FALLS si ya hay líneas B al inicio, no está pensado para definir el aporte diario en el paciente ventilado y no reemplaza la evaluación hemodinámica completa. Lo presentan como una herramienta más, junto al eco Doppler, la variación de presión de pulso y la elevación pasiva de piernas.',
+ ref:'Lichtenstein y Bar 2024 (Ann Intensive Care); Lichtenstein 2015 (Chest).'},
 {s:'otros',id:'exdiaf',t:'Excursión diafragmática',sub:'Modo M, comparada con el límite inferior normal',
  i:[N('e','Excursión','cm',1.4),Sel('sx','Sexo',[['m','Varón'],['f','Mujer']]),Sel('mn','Maniobra',[['q','Respiración tranquila'],['s','Inspiración brusca (sniff)'],['d','Respiración profunda']])],
  f(v){const L={q:{m:1.0,f:0.9},s:{m:1.8,f:1.6},d:{m:4.7,f:3.7}}[v.mn][v.sx],b=v.e<L,t=L.toLocaleString('es-AR',{minimumFractionDigits:1});
@@ -512,8 +526,12 @@ blue:{s:['conv','lin'],pre:'Pulmonar o abdominal. El estudio original usó una s
 exdiaf:{s:['conv','sect'],pre:'Abdominal o cardíaco.',fig:'torso',pts:['rsc'],
  pos:['Subcostal anterior derecha, apuntando hacia arriba y atrás para ver la porción posterior de la cúpula a través del hígado.'],
  st:['Modo M con el cursor lo más perpendicular posible al movimiento de la cúpula.','Medir del pie al pico de la curva en cada maniobra.','Del lado izquierdo se usa el bazo como ventana y es más difícil.']}
+,falls:{s:['sect','conv'],pre:'Cardíaco para los pasos 1 y 2; pulmonar o abdominal para el resto.',fig:'torso',pts:['sub','bua','bla'],
+ pos:['Subxifoidea o la ventana cardíaca disponible: pericardio y tamaño del ventrículo derecho.','Pared anterior, mitad superior: deslizamiento y perfil A o B.','Pared anterior, mitad inferior. Repetir en el otro hemitórax.'],
+ st:['Durante la expansión, repetir la exploración pulmonar anterior después de cada alícuota.','El perfil B exige más de dos líneas B entre dos costillas, distribución anterior simétrica y deslizamiento conservado.']}
 };
 const CK={
+falls:'los siete pasos, el umbral de 18 mmHg, el perfil FALLS, su rendimiento y sus limitaciones (Lichtenstein y Bar 2024, texto completo).',
 epss:'fórmula 75,5 − 2,5·distancia, exclusiones y corte de 7 mm (Silverstein 2006; McKaigney 2014; resúmenes en PubMed).',
 blue:'definición de perfiles, orden de decisión, rendimiento y limitaciones (Lichtenstein y Mezière 2008, texto completo). El árbol es una figura; se armó desde el texto del artículo.',
 exdiaf:'límites inferiores normales por sexo y maniobra (Boussuges 2009, resumen en PubMed).',
@@ -537,7 +555,7 @@ vno:'técnica, umbral de 6 mm, rango de cortes, relación VNO/globo y fórmula 5
 dlm:'fórmula (A − B)/2, plano de medición y referencia de 5 mm (Brain ultrasonography 2019).',
 antro:'fórmula de área, modelo de Perlas con su rango de validez, umbral de 1,5 mL/kg, técnica y cortes de área en terapia intensiva (Pérez-Calatayud 2023; Weidner 2026; Ruiz Ávila 2025; Elbardan 2025; Wang 2022).',
 lind:'solo la definición del índice y la ventana submandibular (Brain ultrasonography 2019). Los puntos de corte no figuran en el material: sin cotejar.'};
-const VMAP={ip:'tt',pic:'tt',ppc:'tt',lind:'lind',sviri:'sviri',vno:'vno',dlm:'dlm',gc:'tsvi',ea:'tsvi',teich:'plax',masa:'plax',simp:'ap2',psap:'vd',tapse:'vd',tac:'tsvd',rvp:'tsvd',diast:'mitral',pht:'mitral',pisa:'mitral',dpdt:'mitral',qpqs:'qpqs',vci:'vci',dv:'a5c',pla:'a5c',vexus:'vexus',porta:'vexus',antro:'antro',antroped:'antroped',balik:'pleura',diaf:'diaf',elip:'vejiga',irr:'renal',vrg:'antro',aant:'antro',lai:'colon',umat:'umat',ams:'ams',guts:'colon',mi:'antro',epss:'plax',mapse:'mapse',fac:'vd',vdf:'vd',blue:'blue',exdiaf:'exdiaf'};
+const VMAP={ip:'tt',pic:'tt',ppc:'tt',lind:'lind',sviri:'sviri',vno:'vno',dlm:'dlm',gc:'tsvi',ea:'tsvi',teich:'plax',masa:'plax',simp:'ap2',psap:'vd',tapse:'vd',tac:'tsvd',rvp:'tsvd',diast:'mitral',pht:'mitral',pisa:'mitral',dpdt:'mitral',qpqs:'qpqs',vci:'vci',dv:'a5c',pla:'a5c',vexus:'vexus',porta:'vexus',antro:'antro',antroped:'antroped',balik:'pleura',diaf:'diaf',elip:'vejiga',irr:'renal',vrg:'antro',aant:'antro',lai:'colon',umat:'umat',ams:'ams',guts:'colon',mi:'antro',epss:'plax',mapse:'mapse',fac:'vd',vdf:'vd',blue:'blue',exdiaf:'exdiaf',falls:'falls'};
 if(typeof module!=='undefined')module.exports={CALCS,has,VIEWS,VMAP,CK};
 </script>
 
