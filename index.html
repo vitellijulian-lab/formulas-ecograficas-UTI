@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1820">
+<meta name="description" content="Calculadoras de ecografía clínica para terapia intensiva. Desarrollada por el Dr. Julián Pablo Vitelli.">
+<meta name="author" content="Dr. Julián Pablo Vitelli">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Fórmulas de Ecografía</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
@@ -95,6 +101,8 @@ details p{margin:6px 0}
 .g-k{fill:var(--ink)}
 .g-t{fill:var(--ink);font:500 10px var(--sans)}
 .g-n{fill:var(--on-accent);font:600 10px var(--mono);text-anchor:middle}
+footer p{margin:0 0 8px}
+footer a{color:var(--accent)}
 footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--mute);font-size:13px;max-width:75ch}
 </style>
 
@@ -102,13 +110,13 @@ footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:v
   <div class="top">
     <div>
       <h1>Fórmulas de Ecografía</h1>
-      <p class="lede">Calculadoras para DTC, eco cardio, VCI y volemia, antro gástrico, pulmón y otros. Los campos vacíos muestran un ejemplo; al cargar tus mediciones el resultado pasa a ser el tuyo.</p>
+      <p class="lede">Calculadoras de ecografía para terapia intensiva: DTC, eco cardio, VCI y volemia, gástrico, nutrición enteral y pulmón. Los campos vacíos muestran un ejemplo; al cargar tus mediciones el resultado pasa a ser el tuyo.</p>
     </div>
     <input id="q" type="search" placeholder="Buscar: Lindegaard, PSAP, antro…" aria-label="Buscar calculadora">
   </div>
   <div class="bar"><nav class="tabs" id="tabs" aria-label="Secciones"></nav></div>
   <main id="main"></main>
-  <footer>Herramienta de apoyo para personal de salud. Los puntos de corte dependen de la población y de la técnica de cada estudio; verificá cada resultado contra la clínica y la fuente citada antes de decidir una conducta.</footer>
+  <footer><p><b>Desarrollada por el Dr. Julián Pablo Vitelli.</b> Ámbito de aplicación: unidad de terapia intensiva (UTI). Versión del 11 de octubre de 2026.</p><p>Herramienta de apoyo para personal de salud. No es un dispositivo médico y no diagnostica ni trata por sí misma. Los puntos de corte dependen de la población y de la técnica de cada estudio; verificá cada resultado contra la clínica y la fuente citada antes de decidir una conducta. Cada tarjeta indica si su contenido fue cotejado contra la fuente original.</p><p>La app no recolecta ni envía datos: todos los cálculos se hacen en tu dispositivo. <a href="privacidad.html">Política de privacidad</a></p></footer>
 </div>
 
 <script id="defs">
@@ -640,4 +648,5 @@ build();
 })();
 </script>
 
+<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
 </html>
