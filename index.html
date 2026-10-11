@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Fórmulas de Ecografía</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
+<style>
+/* Layout: barra fija de secciones + grilla de calculadoras; cada resultado se muestra como la
+   lectura de mediciones de un ecógrafo (panel oscuro, monoespaciado, tabular) en ambos temas. */
+:root{
+  --bg:#eef1f4; --panel:#fbfcfd; --ink:#15212c; --mute:#566573; --line:#cfd7de;
+  --accent:#9a5b00; --accent-fill:#f4b63f; --on-accent:#1b1404; --field:#ffffff;
+  --scr:#0e1820; --scr-line:#22323e; --scr-ink:#eef3f6; --scr-mute:#8fa3b1;
+  --ok:#62d394; --warn:#ffc24a; --crit:#ff8172;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0a1117; --panel:#121c24; --ink:#e6edf2; --mute:#93a4b1; --line:#263541;
+  --accent:#f4b63f; --accent-fill:#f4b63f; --on-accent:#1b1404; --field:#0c151c;
+  --scr:#060c11; --scr-line:#22323e; --scr-ink:#eef3f6; --scr-mute:#8fa3b1;
+  --ok:#62d394; --warn:#ffc24a; --crit:#ff8172; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a1117; --panel:#121c24; --ink:#e6edf2; --mute:#93a4b1; --line:#263541;
+  --accent:#f4b63f; --accent-fill:#f4b63f; --on-accent:#1b1404; --field:#0c151c;
+  --scr:#060c11; --scr-line:#22323e; --scr-ink:#eef3f6; --scr-mute:#8fa3b1;
+  --ok:#62d394; --warn:#ffc24a; --crit:#ff8172; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{font-family:var(--cond);font-weight:600;font-size:30px;line-height:1.05;margin:0;letter-spacing:.01em;text-wrap:balance}
+.lede{margin:6px 0 0;color:var(--mute);max-width:62ch}
+#q{font:inherit;width:min(100%,300px);padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--ink)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-top:16px;padding-block:8px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{font:500 14px var(--cond);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+.tabs button span{font-family:var(--mono);font-size:12px;opacity:.7;margin-left:4px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font:600 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:28px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px;align-items:start}
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.calc h3{font:600 18px/1.2 var(--cond);margin:0;text-wrap:balance}
+.hd{display:flex;gap:10px;justify-content:space-between;align-items:start}
+.sub{margin:3px 0 0;color:var(--mute);font-size:13px}
+.clr{font:500 12px var(--sans);color:var(--mute);background:none;border:1px solid var(--line);border-radius:5px;padding:4px 8px;cursor:pointer;flex:none}
+.ins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ins label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;min-width:0}
+.ins label.wide{grid-column:1/-1}
+.ins small{font:400 12px var(--mono);color:var(--mute)}
+.ins input,.ins select{font:500 16px var(--mono);width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:5px;background:var(--field);color:var(--ink);font-variant-numeric:tabular-nums}
+.ins select{font-family:var(--sans);font-size:14px}
+.ins input::placeholder{color:var(--mute);opacity:.55}
+.read{background:var(--scr);border:1px solid var(--scr-line);border-radius:6px;padding:10px 12px;color:var(--scr-ink);font-family:var(--mono);font-size:14px}
+.tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--scr-mute);margin-bottom:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:5px 0;border-top:1px dashed var(--scr-line)}
+.row:first-of-type{border-top:0}
+.row .l{color:var(--scr-mute)}
+.row .v{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.row .v u{text-decoration:none;font-weight:400;color:var(--scr-mute);margin-left:4px}
+.row .n{grid-column:1/-1;font-family:var(--sans);font-size:13px;color:var(--scr-ink)}
+.row.ok .v,.row.ok .n{color:var(--ok)} .row.warn .v,.row.warn .n{color:var(--warn)} .row.crit .v,.row.crit .n{color:var(--crit)}
+.row .n::before{content:"• "} .row.ok .n::before{content:"✓ "} .row.warn .n::before{content:"▲ "} .row.crit .n::before{content:"■ "}
+.miss{color:var(--scr-mute);font-family:var(--sans);font-size:13px}
+details{font-size:13px;color:var(--mute)}
+summary{cursor:pointer;font-weight:500;color:var(--ink)}
+.fx{font:400 13px/1.5 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0;color:var(--ink)}
+details p{margin:6px 0}
+.ref{font-style:italic}
+.ck{color:var(--ink);border-left:3px solid var(--accent-fill);padding-left:8px}
+.ck.no{color:var(--mute);border-left-color:var(--line)}
+.empty{color:var(--mute);padding:24px 0}
+.pv{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.pv figure{margin:0;flex:0 1 210px;min-width:0}
+.pv figure svg{display:block;width:100%;height:auto;background:var(--field);border:1px solid var(--line);border-radius:6px}
+.pv figcaption{font-size:12px;margin-top:4px}
+.pv .tx{flex:1 1 230px;min-width:0}
+.pv ol,.pv ul.st{margin:6px 0;padding-left:18px}
+.pv li{margin:4px 0}
+.pv ol li::marker{font:600 12px var(--mono);color:var(--accent)}
+.sondas{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px;padding:0;list-style:none}
+.sondas li{display:flex;align-items:center;gap:6px;margin:0;border:1px solid var(--line);border-radius:5px;padding:3px 8px 3px 4px;color:var(--ink);font-weight:500}
+.sondas svg{width:26px;height:26px;flex:none}
+.g-o{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.g-d{fill:none;stroke:var(--mute);stroke-width:1;stroke-dasharray:3 3}
+.g-a{fill:var(--accent-fill);stroke:var(--ink);stroke-width:1}
+.g-b{fill:var(--accent-fill);opacity:.32}
+.g-c{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round}
+.g-m{fill:var(--mute);opacity:.45}
+.g-k{fill:var(--ink)}
+.g-t{fill:var(--ink);font:500 10px var(--sans)}
+.g-n{fill:var(--on-accent);font:600 10px var(--mono);text-anchor:middle}
+footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--mute);font-size:13px;max-width:75ch}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Fórmulas de Ecografía</h1>
+      <p class="lede">Calculadoras para DTC, eco cardio, VCI y volemia, antro gástrico, pulmón y otros. Los campos vacíos muestran un ejemplo; al cargar tus mediciones el resultado pasa a ser el tuyo.</p>
+    </div>
+    <input id="q" type="search" placeholder="Buscar: Lindegaard, PSAP, antro…" aria-label="Buscar calculadora">
+  </div>
+  <div class="bar"><nav class="tabs" id="tabs" aria-label="Secciones"></nav></div>
+  <main id="main"></main>
+  <footer>Herramienta de apoyo para personal de salud. Los puntos de corte dependen de la población y de la técnica de cada estudio; verificá cada resultado contra la clínica y la fuente citada antes de decidir una conducta.</footer>
+</div>
+
+<script id="defs">
+const PI=Math.PI, has=x=>Number.isFinite(x);
+const N=(k,l,u,e,opt)=>({k,l,u,e,opt:!!opt});
+const Sel=(k,l,o)=>({k,l,o});
+const R=(l,v,d,u,lv,n)=>({l,v,d,u,lv:lv||'',n:n||''});
+const SECTIONS=[['neuro','DTC / Neuro'],['cardio','Eco cardio'],['vol','VCI / Volemia'],['gast','Gástrico'],['nut','Nutrición enteral'],['otros','Pulmón y otros']];
+const CALCS=[
+/* ---------- NEURO ---------- */
+{s:'neuro',id:'ip',t:'Índice de pulsatilidad y de resistencia',sub:'Gosling (IP) y Pourcelot (IR)',
+ i:[N('vs','VS (pico sistólico)','cm/s',100),N('vd','VFD (fin de diástole)','cm/s',40),N('vm','VM medida (TAMAX)','cm/s',null,1)],
+ f(v){const vm=has(v.vm)?v.vm:(v.vs+2*v.vd)/3,ip=(v.vs-v.vd)/vm,ir=(v.vs-v.vd)/v.vs;
+  const a=ip<0.6?['warn','Bajo: hiperemia, vasoespasmo, estenosis proximal o MAV']:ip<=1.1?['ok','Normal (0,6–1,1)']:ip<=1.4?['warn','Elevado: resistencia distal aumentada']:['crit','Muy elevado: sospechar HTE / caída de PPC'];
+  return[R('VM'+(has(v.vm)?'':' (calculada)'),vm,1,'cm/s'),R('IP',ip,2,'',a[0],a[1]),R('IR',ir,2,'',ir>0.75?'warn':'',ir>0.75?'> 0,75: elevado':'')]},
+ fx:'VM = (VS + 2·VFD) / 3\nIP = (VS − VFD) / VM\nIR = (VS − VFD) / VS',
+ n:'Si el equipo informa la VM por envolvente (TAMAX), usala: la aproximación 1/3–2/3 falla con taquicardia o bradicardia. El IP sube con hipocapnia, bradicardia e insuficiencia aórtica, además de la HTE.',ref:'Gosling & King 1974; Pourcelot 1974.'},
+{s:'neuro',id:'pic',t:'PIC por DTC a partir del IP',sub:'Criterio del consenso de Bruselas y fórmulas por IP, lado por lado',
+ i:[N('vs','VS ACM derecha','cm/s',100),N('vd','VFD ACM derecha','cm/s',30),N('ls','VS ACM izquierda','cm/s',110,1),N('ld','VFD ACM izquierda','cm/s',28,1),N('vm','VM derecha medida','cm/s',null,1),N('lm','VM izquierda medida','cm/s',null,1)],
+ f(v){const side=(s,d,m,nm)=>{const vm=has(m)?m:(s+2*d)/3,ip=(s-d)/vm;
+   const a=ip>=1.3?(d<20?['crit','IP ≥ 1,3 con VFD < 20 cm/s: sospecha de HTE']:['warn','IP ≥ 1,3 pero VFD ≥ 20 cm/s: no cumple el criterio combinado']):['ok','IP < 1,3'];
+   return{ip,rows:[R('IP '+nm,ip,2,'',a[0],a[1]),R('PIC '+nm+' = 4,47·IP + 12,68',4.47*ip+12.68,1,'mmHg'),R('PIC '+nm+' (Bellner)',10.93*ip-1.28,1,'mmHg')]}};
+  const a=side(v.vs,v.vd,v.vm,'der.');let o=a.rows;
+  if(has(v.ls)&&has(v.ld)){const b=side(v.ls,v.ld,v.lm,'izq.');o=o.concat(b.rows,[R('Diferencia de IP entre lados',Math.abs(a.ip-b.ip),2,'')])}
+  return o},
+ fx:'IP = (VS − VFD) / VM\nCriterio de Bruselas: IP ≥ 1,3 junto con VFD < 20 cm/s\nPIC por IP = 4,47 · IP + 12,68\nPIC de Bellner = 10,93 · IP − 1,28',
+ n:'El consenso de Bruselas recomienda el umbral de IP 1,3 junto con VFD < 20 cm/s, tomar el peor lado y considerar un cambio de IP de 0,5 o más respecto del basal como señal de modificación del flujo posiblemente ligada a la PIC. Su metaanálisis halló un mejor corte de IP de 1,28, con sensibilidad y especificidad de 0,74. El IP depende también de la presión arterial y de la PaCO2: refleja perfusión y solo indirectamente PIC. Las dos fórmulas dan valores distintos con el mismo IP; sirven como orientación, no como cifra de PIC.',
+ ref:'Consenso de Bruselas B-ICONIC (Intensive Care Med 2025); Martínez-Palacios 2023 (J Neurotrauma); Bellner 2004.'},
+{s:'neuro',id:'ppc',t:'PPC y PIC estimadas por DTC',sub:'Fórmula de velocidad diastólica (Czosnyka–Schmidt) y alternativa',
+ i:[N('vs','VS ACM','cm/s',100),N('vd','VFD ACM','cm/s',30),N('pam','PAM','mmHg',90),N('pad','PA diastólica','mmHg',65,1),N('vm','VM medida','cm/s',null,1)],
+ f(v){const vm=has(v.vm)?v.vm:(v.vs+2*v.vd)/3,c=v.pam*v.vd/vm+14,pic=v.pam-c;
+  const lv=x=>x<50?'crit':x<60?'warn':'ok',tx=x=>x<50?'< 50 mmHg':x<60?'50–60 mmHg':'≥ 60 mmHg';
+  const pl=x=>x>=22?['crit','≥ 22 mmHg: sospecha de HTE']:x>=20?['warn','20–22 mmHg: zona umbral del consenso']:['ok','< 20 mmHg: HTE poco probable'],p=pl(pic);
+  const o=[R('PPC estimada',c,0,'mmHg',lv(c),tx(c)),R('PIC = PAM − PPC',pic,0,'mmHg',p[0],p[1])];
+  if(has(v.pad)){const b=vm/(vm-v.vd)*(v.pam-v.pad);o.push(R('PPC (Belfort–Edouard)',b,0,'mmHg'),R('PIC por Belfort–Edouard',v.pam-b,0,'mmHg'))}
+  o.push(R('VFD ACM',v.vd,0,'cm/s',v.vd<20?'crit':'',v.vd<20?'VFD < 20 cm/s: perfusión comprometida':''));return o},
+ fx:'PPC = PAM · (VFD / VM) + 14\nPIC = PAM − PPC\nBelfort–Edouard: PPC = [VM / (VM − VFD)] · (PAM − PAD)',
+ n:'La fórmula de velocidad diastólica es la que adopta el consenso de Bruselas, con un umbral de 20–22 mmHg para sospechar o excluir HTE (mejor corte de su metaanálisis: 19,6 mmHg, con sensibilidad y especificidad de 0,70). En el trabajo de Schmidt la PPC estimada tuvo un límite de confianza del 95 % de hasta ±12 mmHg. El consenso desaconseja usar las variaciones de esta PIC respecto del basal para estimar cambios de PIC. Medir la PAM en el mismo momento. La fórmula de Belfort–Edouard y los cortes de PPC de 50 y 60 mmHg no figuran en el material cotejado.',
+ ref:'Schmidt 2001; Czosnyka 1998; Brain ultrasonography (Intensive Care Med 2019); consenso de Bruselas B-ICONIC (Intensive Care Med 2025); Belfort 2000; Edouard 2005.'},
+{s:'neuro',id:'lind',t:'Índice de Lindegaard',sub:'Vasoespasmo vs. hiperemia en circulación anterior',
+ i:[N('acm','VM ACM','cm/s',150),N('aci','VM ACI extracraneal','cm/s',35)],
+ f(v){const il=v.acm/v.aci;let a;
+  if(v.acm<120)a=['ok','VM ACM < 120 cm/s: sin criterio de velocidad'];
+  else if(il<3)a=['warn','Velocidad alta con IL < 3: hiperemia'];
+  else if(il<=6)a=['warn','IL 3–6: vasoespasmo leve a moderado'];
+  else a=['crit','IL > 6: vasoespasmo severo'];
+  return[R('Índice de Lindegaard',il,2,'',a[0],a[1]),R('VM ACM',v.acm,0,'cm/s',v.acm>=200?'crit':'',v.acm>=200?'VM ≥ 200 cm/s: rango de vasoespasmo severo':'')]},
+ fx:'IL = VM ACM / VM ACI extracraneal ipsilateral',
+ n:'ACI extracraneal por ventana submandibular, mismo lado. Un aumento de VM > 50 cm/s en 24 h también es señal de alarma.',ref:'Lindegaard 1989.'},
+{s:'neuro',id:'sviri',t:'Índice de Sviri (Lindegaard modificado)',sub:'Vasoespasmo de arteria basilar',
+ i:[N('ab','VM arteria basilar','cm/s',90),N('av','VM vertebral extracraneal','cm/s',35)],
+ f(v){const r=v.ab/v.av;const a=r<=2?['ok','≤ 2: sin vasoespasmo']:r<=2.5?['warn','> 2: vasoespasmo basilar']:r<=3?['warn','> 2,5 con VM AB > 85 cm/s: moderado']:['crit','> 3: severo'];
+  return[R('AB / AV',r,2,'',a[0],a[1])]},
+ fx:'Índice = VM AB / VM AV extracraneal (promedio de ambas vertebrales)',n:'',ref:'Sviri 2006.'},
+{s:'neuro',id:'vno',t:'Vaina del nervio óptico',sub:'Dos planos por ojo, promedio de cuatro medidas y PIC estimada',
+ i:[N('dt','OD plano transversal','mm',5.3),N('ds','OD plano sagital','mm',5.5),N('it','OI plano transversal','mm',5.6,1),N('is','OI plano sagital','mm',5.8,1),N('dto','Diámetro transverso del globo','mm',23.5,1)],
+ f(v){const od=(v.dt+v.ds)/2,l=[v.it,v.is].filter(has),oi=l.length?l.reduce((a,b)=>a+b)/l.length:NaN,m=has(oi)?(od+oi)/2:od;
+  const a=m<5?['ok','< 5 mm: HTE poco probable']:m<6?['warn','5–6 mm: rango donde cae el corte de la mayoría de los estudios']:['crit','≥ 6 mm: umbral del consenso de Bruselas'];
+  const o=[R('VNO ojo derecho',od,2,'mm')];
+  if(has(oi))o.push(R('VNO ojo izquierdo',oi,2,'mm'),R('Diferencia entre ojos',Math.abs(od-oi),2,'mm'));
+  o.push(R('VNO promedio',m,2,'mm',a[0],a[1]));
+  if(has(v.dto)){const q=m/v.dto;o.push(R('VNO / diámetro del globo',q,3,'',q>0.25?'warn':'ok',q>0.25?'> 0,25: sugiere HTE':'≤ 0,25'))}
+  const p=5*m-13.92;o.push(R('PIC estimada',p,1,'mmHg',p>=20?'crit':'',p>=20?'≥ 20 mmHg estimados':''));return o},
+ fx:'VNO de cada ojo = (transversal + sagital) / 2\nVNO = promedio de las cuatro medidas\nRelación = VNO / diámetro transverso del globo\nPIC (mmHg) = 5,00 · VNO (mm) − 13,92',
+ n:'Sonda lineal de 7,5 MHz, paciente en supino con cabecera a 30°, párpado cerrado. Medir 3 mm por detrás de la retina, perpendicular al eje del nervio, en plano axial y sagital de cada ojo, y promediar las cuatro medidas. El consenso de Bruselas recomienda 6 mm como umbral y considera un cambio de 0,5 mm o más respecto del basal como posible signo de modificación de la PIC; su metaanálisis halló un mejor corte de 5,9 mm (sensibilidad y especificidad 0,83). Los estudios individuales en TEC dan cortes entre 5,2 y 6,6 mm. La vaina responde en segundos a los cambios de PIC. No usar con fractura de base de cráneo o lesión ocular. Para la relación VNO/globo se publicaron cortes de 0,25 y 0,264; en uno de esos estudios el diámetro del globo se midió por tomografía. La fórmula de PIC proviene de una sola cohorte de 64 pacientes.',
+ ref:'Robba 2017 (PLoS Med, fórmula de PIC); consenso de Bruselas B-ICONIC (Intensive Care Med 2025); revisión de VNO en TEC (Neurocrit Care 2024); Brain ultrasonography (Intensive Care Med 2019).'},
+{s:'neuro',id:'dlm',t:'Desviación de línea media',sub:'Dúplex transcraneal, tercer ventrículo',
+ i:[N('a','Distancia A (lado de la lesión)','mm',76),N('b','Distancia B (contralateral)','mm',68)],
+ f(v){const d=(v.a-v.b)/2,x=Math.abs(d);
+  return[R('DLM',x,1,'mm',x>=5?'crit':'',x<0.05?'Sin desviación':(d>0?'Desplazada hacia el lado B':'Desplazada hacia el lado A')+(x>=5?' · ≥ 5 mm: significativa':''))]},
+ fx:'DLM = (A − B) / 2',
+ n:'A y B: distancia desde el cráneo de cada lado hasta el tercer ventrículo, en plano diencefálico. La referencia de 5 mm es la usada en los estudios de comparación con tomografía. El valor por ultrasonido debe interpretarse como tendencia y no como cifra absoluta.',
+ ref:'Seidel 1996; Brain ultrasonography (Intensive Care Med 2019).'},
+/* ---------- CARDIO ---------- */
+{s:'cardio',id:'gc',t:'Volumen sistólico y gasto cardíaco',sub:'TSVI por VTI',
+ i:[N('d','Diámetro TSVI','cm',2.0),N('vti','VTI TSVI','cm',20),N('fc','FC','lpm',75),N('p','Peso','kg',75,1),N('h','Talla','cm',172,1)],
+ f(v){const a=PI*v.d*v.d/4,vs=a*v.vti,gc=vs*v.fc/1000;const o=[R('Área TSVI',a,2,'cm²'),R('Volumen sistólico',vs,0,'mL'),R('Gasto cardíaco',gc,2,'L/min'),R('VTI',v.vti,1,'cm',v.vti<18?'warn':'ok',v.vti<18?'VTI < 18 cm: bajo':'VTI 18–22 cm: normal o alto')];
+  if(has(v.p)&&has(v.h)){const sc=Math.sqrt(v.p*v.h/3600),ic=gc/sc;o.push(R('SC (Mosteller)',sc,2,'m²'),R('Índice cardíaco',ic,2,'L/min/m²',ic<2.2?'crit':'ok',ic<2.2?'< 2,2: bajo gasto':'≥ 2,2'),R('Índice sistólico',vs/sc,0,'mL/m²'))}return o},
+ fx:'Área = π · (d/2)²\nVS = Área · VTI\nGC = VS · FC\nSC = √(peso · talla / 3600)\nIC = GC / SC',
+ n:'El diámetro entra al cuadrado: 2 mm de error cambian el VS cerca de 20 %. Para seguir a un mismo paciente alcanza con el VTI.',ref:'Lang 2015 (ASE/EACVI).'},
+{s:'cardio',id:'teich',t:'FEVI por Teichholz y fracción de acortamiento',sub:'Modo M o 2D lineal',
+ i:[N('dd','DTD VI','cm',4.8),N('ds','DTS VI','cm',3.2)],
+ f(v){const V=d=>7/(2.4+d)*d**3,vd=V(v.dd),vs=V(v.ds),fe=(vd-vs)/vd*100,fa=(v.dd-v.ds)/v.dd*100;
+  return[R('VTD',vd,0,'mL'),R('VTS',vs,0,'mL'),R('FEVI',fe,0,'%',fe<=40?'crit':fe<50?'warn':'ok',fe<=40?'Reducida (≤ 40 %)':fe<50?'Levemente reducida (41–49 %)':'Preservada (≥ 50 %)'),R('Fracción de acortamiento',fa,0,'%',fa<25?'warn':'',fa<25?'< 25 %: reducida':'')]},
+ fx:'V = 7 / (2,4 + D) · D³\nFEVI = (VTD − VTS) / VTD\nFAc = (DTD − DTS) / DTD',
+ n:'Asume geometría normal: no es válida con trastornos segmentarios o remodelado. Preferir Simpson biplano.',ref:'Teichholz 1976.'},
+{s:'cardio',id:'simp',t:'FEVI por volúmenes',sub:'Simpson biplano o 3D',
+ i:[N('vd','VTD','mL',120),N('vs','VTS','mL',50)],
+ f(v){const fe=(v.vd-v.vs)/v.vd*100;return[R('FEVI',fe,0,'%',fe<=40?'crit':fe<50?'warn':'ok',fe<=40?'Reducida (≤ 40 %)':fe<50?'Levemente reducida (41–49 %)':'Preservada (≥ 50 %)'),R('Volumen sistólico',v.vd-v.vs,0,'mL')]},
+ fx:'FEVI = (VTD − VTS) / VTD · 100',n:'Rango normal por método biplano: 52–72 % en varones y 54–74 % en mujeres. Fin de diástole: primer cuadro tras el cierre mitral; fin de sístole: cuadro siguiente al cierre aórtico.',ref:'Lang 2015 (ASE/EACVI).'},
+{s:'cardio',id:'psap',t:'PSAP por insuficiencia tricuspídea',sub:'Bernoulli simplificado + PAD',
+ i:[N('v','Vmáx IT','m/s',3.0),N('pad','PAD estimada','mmHg',8)],
+ f(v){const g=4*v.v*v.v,p=g+v.pad;const a=v.v<=2.8?['ok','Vmáx ≤ 2,8 m/s: probabilidad baja de HP']:v.v<=3.4?['warn','Vmáx 2,9–3,4 m/s: probabilidad intermedia']:['crit','Vmáx > 3,4 m/s: probabilidad alta'];
+  return[R('Gradiente VD–AD',g,0,'mmHg'),R('PSAP',p,0,'mmHg',a[0],a[1]),R('PAPm (Chemla)',0.61*p+2,0,'mmHg')]},
+ fx:'PSAP = 4 · Vmáx² + PAD\nPAPm = 0,61 · PSAP + 2',n:'Válido sin obstrucción al tracto de salida del VD. Con IT masiva (flujo laminar) el gradiente subestima. La PAD sale de la calculadora de VCI.',ref:'Rudski 2010; Chemla 2004; Humbert 2022 (ESC/ERS).'},
+{s:'cardio',id:'tac',t:'PAPm por tiempo de aceleración pulmonar',sub:'Doppler pulsado en TSVD',
+ i:[N('t','Tiempo de aceleración','ms',90)],
+ f(v){const m=79-0.45*v.t,d=90-0.62*v.t,use=v.t>=120?m:d;
+  return[R('PAPm',use,0,'mmHg',use>20?'warn':'ok',(v.t>=120?'Mahan (TAc ≥ 120 ms)':'Dabestani (TAc < 120 ms)')+(v.t<105?' · TAc < 105 ms sugiere HP':'')),R('Mahan',m,0,'mmHg'),R('Dabestani',d,0,'mmHg')]},
+ fx:'TAc ≥ 120 ms:  PAPm = 79 − 0,45 · TAc\nTAc < 120 ms:  PAPm = 90 − 0,62 · TAc',n:'Corregir mentalmente con FC fuera de 60–100 lpm. Una muesca mesosistólica refuerza la sospecha.',ref:'Mahan 1983; Dabestani 1987.'},
+{s:'cardio',id:'diast',t:'Presiones de llenado del VI',sub:'E/A, E/e′ y PCP estimada',
+ i:[N('e','Onda E','cm/s',80),N('a','Onda A','cm/s',60,1),N('es','e′ septal','cm/s',7),N('el','e′ lateral','cm/s',10)],
+ f(v){const q=v.e/((v.es+v.el)/2),o=[];if(has(v.a))o.push(R('E/A',v.e/v.a,2,''));
+  o.push(R('E/e′ promedio',q,1,'',q>14?'crit':q<8?'ok':'warn',q>14?'> 14: presiones elevadas':q<8?'< 8: presiones normales':'8–14: indeterminado, sumar otros criterios'),R('E/e′ septal',v.e/v.es,1,''),R('E/e′ lateral',v.e/v.el,1,''),R('PCP (Nagueh)',1.24*v.e/v.el+1.9,0,'mmHg'));return o},
+ fx:'E/e′ = E / [(e′sep + e′lat) / 2]\nPCP = 1,24 · (E / e′ lateral) + 1,9',n:'Otros criterios ASE 2016: e′ septal < 7 o lateral < 10 cm/s, Vmáx IT > 2,8 m/s, volumen AI indexado > 34 mL/m². No aplica con calcificación anular severa, prótesis mitral o estenosis mitral.',ref:'Nagueh 1997; Nagueh 2016 (ASE/EACVI).'},
+{s:'cardio',id:'ea',t:'Área valvular aórtica',sub:'Ecuación de continuidad',
+ i:[N('d','Diámetro TSVI','cm',2.0),N('v1','VTI TSVI','cm',20),N('v2','VTI aórtico','cm',90),N('vm','Vmáx aórtica','m/s',4.2,1),N('sc','SC','m²',1.9,1)],
+ f(v){const a=PI*v.d*v.d/4*v.v1/v.v2,k=v.v1/v.v2;const o=[R('AVA',a,2,'cm²',a<1?'crit':a<=1.5?'warn':'ok',a<1?'< 1,0: severa':a<=1.5?'1,0–1,5: moderada':'> 1,5: leve o sin estenosis'),R('Índice adimensional',k,2,'',k<0.25?'crit':'',k<0.25?'< 0,25: severa':'')];
+  if(has(v.sc))o.push(R('AVA indexada',a/v.sc,2,'cm²/m²',a/v.sc<0.6?'crit':'',a/v.sc<0.6?'< 0,6: severa':''));
+  if(has(v.vm))o.push(R('Gradiente máximo',4*v.vm*v.vm,0,'mmHg',v.vm>=4?'crit':'',v.vm>=4?'Vmáx ≥ 4 m/s: severa':''));return o},
+ fx:'AVA = Área TSVI · VTI TSVI / VTI Ao\nÍndice adimensional = VTI TSVI / VTI Ao',n:'Con AVA < 1 y gradiente medio < 40 mmHg pensar en bajo flujo–bajo gradiente (VS indexado < 35 mL/m²).',ref:'Baumgartner 2017 (EACVI/ASE).'},
+{s:'cardio',id:'pht',t:'Área mitral por hemipresión',sub:'Estenosis mitral reumática',
+ i:[N('t','Tiempo de hemipresión','ms',180)],
+ f(v){const a=220/v.t;return[R('Área mitral',a,2,'cm²',a<1?'crit':a<=1.5?'warn':'ok',a<1?'< 1,0: severa':a<=1.5?'1,0–1,5: significativa':'> 1,5')]},
+ fx:'AVM = 220 / PHT\nPHT ≈ 0,29 · tiempo de desaceleración',n:'No usar tras valvuloplastia inmediata, con insuficiencia aórtica significativa ni con rigidez ventricular alterada.',ref:'Hatle 1979.'},
+{s:'cardio',id:'bern',t:'Gradiente por Bernoulli',sub:'Cualquier jet',
+ i:[N('v2','Velocidad del jet','m/s',4.0),N('v1','Velocidad proximal','m/s',null,1)],
+ f(v){return[R('Gradiente',has(v.v1)?4*(v.v2**2-v.v1**2):4*v.v2**2,0,'mmHg')]},
+ fx:'ΔP = 4 · V²\nCon V proximal > 1,5 m/s:  ΔP = 4 · (V2² − V1²)',n:'',ref:''},
+{s:'cardio',id:'pisa',t:'Orificio regurgitante por PISA',sub:'Insuficiencia mitral',
+ i:[N('r','Radio PISA','cm',0.9),N('va','Velocidad de aliasing','cm/s',38),N('vx','Vmáx del jet','cm/s',500),N('vti','VTI del jet','cm',150)],
+ f(v){const q=2*PI*v.r*v.r*v.va,e=q/v.vx,vr=e*v.vti;
+  return[R('Flujo regurgitante',q,0,'mL/s'),R('ORE',e,2,'cm²',e>=0.4?'crit':e>=0.2?'warn':'ok',e>=0.4?'≥ 0,40: severa':e>=0.2?'0,20–0,39: moderada':'< 0,20: leve'),R('Volumen regurgitante',vr,0,'mL',vr>=60?'crit':'',vr>=60?'≥ 60 mL: severa':'')]},
+ fx:'Flujo = 2π · r² · V aliasing\nORE = Flujo / Vmáx\nVR = ORE · VTI',n:'Cortes para IM primaria. En IM secundaria el orificio es elíptico y PISA subestima: se considera severa con valores menores.',ref:'Zoghbi 2017 (ASE).'},
+{s:'cardio',id:'rvs',t:'Resistencia vascular sistémica',sub:'Con GC ecográfico',
+ i:[N('pam','PAM','mmHg',75),N('pvc','PVC / PAD','mmHg',8),N('gc','Gasto cardíaco','L/min',4.7)],
+ f(v){const u=(v.pam-v.pvc)/v.gc,d=u*80;return[R('RVS',d,0,'dyn·s·cm⁻⁵',d<800?'warn':d>1200?'warn':'ok',d<800?'< 800: vasodilatación':d>1200?'> 1200: vasoconstricción':'800–1200: normal'),R('RVS',u,1,'UW')]},
+ fx:'RVS = (PAM − PVC) / GC · 80',n:'',ref:''},
+{s:'cardio',id:'rvp',t:'Resistencia vascular pulmonar',sub:'Método de Abbas',
+ i:[N('v','Vmáx IT','m/s',3.0),N('vti','VTI TSVD','cm',12)],
+ f(v){const k=v.v/v.vti,r=10*k+0.16;return[R('Vmáx IT / VTI TSVD',k,3,''),R('RVP',r,1,'UW',r>2?'warn':'ok',r>2?'> 2 UW: elevada':'≤ 2 UW')]},
+ fx:'RVP (UW) = 10 · (Vmáx IT / VTI TSVD) + 0,16',n:'Pierde exactitud con RVP muy altas (> 6 UW).',ref:'Abbas 2003.'},
+{s:'cardio',id:'tapse',t:'Acoplamiento VD–arteria pulmonar',sub:'TAPSE / PSAP',
+ i:[N('t','TAPSE','mm',18),N('p','PSAP','mmHg',44)],
+ f(v){const k=v.t/v.p;const a=k<0.19?['crit','< 0,19: riesgo alto']:k<=0.32?['warn','0,19–0,32: riesgo intermedio']:k<0.55?['warn','> 0,32 pero < 0,55: compatible con HP']:['ok','≥ 0,55'];
+  return[R('TAPSE/PSAP',k,2,'mm/mmHg',a[0],a[1]),R('TAPSE',v.t,0,'mm',v.t<17?'warn':'',v.t<17?'< 17 mm: disfunción sistólica del VD':'')]},
+ fx:'Acoplamiento = TAPSE / PSAP',n:'',ref:'Tello 2019; Humbert 2022 (ESC/ERS).'},
+{s:'cardio',id:'qpqs',t:'Qp/Qs',sub:'Cortocircuitos',
+ i:[N('dp','Diámetro TSVD','cm',2.4),N('vp','VTI TSVD','cm',18),N('ds','Diámetro TSVI','cm',2.0),N('vs','VTI TSVI','cm',20)],
+ f(v){const qp=PI*v.dp**2/4*v.vp,qs=PI*v.ds**2/4*v.vs,k=qp/qs;return[R('Qp (VS pulmonar)',qp,0,'mL'),R('Qs (VS sistémico)',qs,0,'mL'),R('Qp/Qs',k,2,'',k>=1.5?'warn':'',k>=1.5?'≥ 1,5: cortocircuito significativo':'')]},
+ fx:'Qp/Qs = (Área TSVD · VTI TSVD) / (Área TSVI · VTI TSVI)',n:'',ref:''},
+{s:'cardio',id:'masa',t:'Masa del VI y geometría',sub:'Fórmula del cubo (ASE)',
+ i:[N('s','Septum en diástole','cm',1.0),N('d','DTD VI','cm',4.8),N('p','Pared posterior','cm',1.0),N('sc','SC','m²',1.9,1),Sel('sx','Sexo',[['m','Varón'],['f','Mujer']])],
+ f(v){const m=0.8*1.04*((v.d+v.s+v.p)**3-v.d**3)+0.6,rwt=2*v.p/v.d,o=[R('Masa VI',m,0,'g')];let hv=null;
+  if(has(v.sc)){const i=m/v.sc,c=v.sx==='f'?95:115;hv=i>c;o.push(R('Masa indexada',i,0,'g/m²',hv?'warn':'ok',(hv?'> ':'≤ ')+c+' g/m²'))}
+  o.push(R('Grosor parietal relativo',rwt,2,'',rwt>0.42?'warn':'',hv===null?(rwt>0.42?'> 0,42':''):hv?(rwt>0.42?'Hipertrofia concéntrica':'Hipertrofia excéntrica'):(rwt>0.42?'Remodelado concéntrico':'Geometría normal')));return o},
+ fx:'Masa = 0,8 · 1,04 · [(DTD + SIV + PP)³ − DTD³] + 0,6\nGPR = 2 · PP / DTD',n:'',ref:'Devereux 1986; Lang 2015.'},
+{s:'cardio',id:'dpdt',t:'dP/dt del VI',sub:'Sobre el jet de insuficiencia mitral',
+ i:[N('t','Tiempo entre 1 y 3 m/s','ms',30)],
+ f(v){const d=32000/v.t;return[R('dP/dt',d,0,'mmHg/s',d<800?'crit':d<1200?'warn':'ok',d<800?'< 800: disfunción severa':d<1200?'800–1200: reducida':'> 1200: normal')]},
+ fx:'dP/dt = 32 mmHg / Δt (s)',n:'32 mmHg es la diferencia entre 4·3² y 4·1².',ref:''},
+{s:'cardio',id:'epss',t:'Distancia E-septum',sub:'Estimación rápida de la fracción de eyección',
+ i:[N('d','Distancia E-septum','mm',6)],
+ f(v){const fe=Math.max(0,75.5-2.5*v.d);return[R('FEVI estimada',fe,0,'%'),R('Distancia E-septum',v.d,1,'mm',v.d>7?'warn':'ok',v.d>7?'> 7 mm: no descarta FEVI ≤ 30 %':'≤ 7 mm: FEVI ≤ 30 % muy poco probable')]},
+ fx:'FEVI (%) = 75,5 − 2,5 · distancia E-septum (mm)',
+ n:'Regresión obtenida contra resonancia en 42 pacientes, con correlación de 0,78 a 0,82 y error estándar de 9 a 10 puntos de FEVI: es una estimación gruesa. El estudio excluyó prótesis mitral, hipertrofia septal asimétrica e insuficiencia aórtica significativa. En guardia, una distancia mayor de 7 mm tuvo sensibilidad de 100 % y especificidad de 52 % para FEVI de 30 % o menos. Se mide en paraesternal eje largo, entre el punto E de la valva anterior mitral y el septum.',
+ ref:'Silverstein 2006 (Am J Cardiol); McKaigney 2014 (Am J Emerg Med).'},
+{s:'cardio',id:'mapse',t:'ESPAM (MAPSE) y strain estimado',sub:'Función longitudinal del ventrículo izquierdo',
+ i:[N('s','ESPAM septal','mm',11),N('l','ESPAM lateral','mm',13),N('len','Longitud del VI en diástole','cm',8.5,1)],
+ f(v){const m=(v.s+v.l)/2,o=[R('ESPAM promedio',m,1,'mm',m<8?'crit':m<10?'warn':'ok',m<8?'< 8 mm: función longitudinal reducida':m<10?'8–10 mm: limítrofe':'≥ 10 mm: conservada')];
+  if(has(v.len))o.push(R('Strain longitudinal estimado',m/(v.len*10)*100,1,'%'));return o},
+ fx:'ESPAM promedio = (septal + lateral) / 2\nStrain estimado (%) = ESPAM promedio / longitud del VI · 100',
+ n:'Modo M sobre el anillo mitral septal y lateral en apical 4 cámaras, con el cursor alineado al movimiento longitudinal. Es útil con mala ventana, porque no depende de ver el endocardio. Los puntos de corte y la fórmula del strain estimado están cargados de memoria y sin cotejar.',
+ ref:'Hu 2013 (Eur Heart J Cardiovasc Imaging), revisión.'},
+{s:'cardio',id:'fac',t:'Cambio fraccional de área',sub:'Ventrículo derecho o izquierdo',
+ i:[N('d','Área de fin de diástole','cm²',24),N('s','Área de fin de sístole','cm²',15),Sel('c','Cavidad',[['d','Ventrículo derecho'],['i','Ventrículo izquierdo']])],
+ f(v){const f=(v.d-v.s)/v.d*100;return[v.c==='d'?R('Cambio fraccional de área',f,0,'%',f<35?'warn':'ok',f<35?'< 35 %: disfunción sistólica del VD':'≥ 35 %'):R('Cambio fraccional de área',f,0,'%')]},
+ fx:'CFA (%) = (Área diastólica − Área sistólica) / Área diastólica · 100',
+ n:'Ventrículo derecho: apical 4 cámaras centrada en el VD, trazando el endocardio con las trabéculas dentro de la cavidad. Ventrículo izquierdo: eje corto a nivel de los músculos papilares; no cargué un punto de corte porque no tengo una fuente cotejada.',
+ ref:'Lang 2015; corte de 35 % citado en Beaubien-Souligny 2020.'},
+{s:'cardio',id:'vdf',t:'Ventrículo derecho: TAPSE, onda S′ y diámetro basal',sub:'Función longitudinal y tamaño',
+ i:[N('t','TAPSE','mm',18,1),N('sp','Onda S′ tricuspídea','cm/s',10,1),N('b','Diámetro basal del VD','mm',38,1)],
+ f(v){const o=[];if(has(v.t))o.push(R('TAPSE',v.t,0,'mm',v.t<17?'warn':'ok',v.t<17?'< 17 mm: función longitudinal reducida':'≥ 17 mm'));
+  if(has(v.sp))o.push(R('Onda S′',v.sp,1,'cm/s',v.sp<9.5?'warn':'ok',v.sp<9.5?'< 9,5 cm/s: reducida':'≥ 9,5 cm/s'));
+  if(has(v.b))o.push(R('Diámetro basal',v.b,0,'mm',v.b>41?'warn':'ok',v.b>41?'> 41 mm: dilatado':'≤ 41 mm'));return o},
+ fx:'TAPSE < 17 mm\nOnda S′ < 9,5 cm/s\nDiámetro basal > 41 mm',
+ n:'Cargá solo lo que mediste. Diámetro basal al final de la diástole en apical 4 cámaras centrada en el VD. Los tres puntos de corte son los que recuerdo de la guía de cuantificación de cámaras de 2015; no pude leer esa sección. Una de las fuentes cotejadas usa TAPSE menor de 16 mm como definición de disfunción.',
+ ref:'Lang 2015.'},
+/* ---------- VCI / VOLEMIA ---------- */
+{s:'vol',id:'vci',t:'Vena cava inferior',sub:'Colapsabilidad, distensibilidad y PAD estimada',
+ i:[N('mx','Diámetro máximo','cm',2.0),N('mn','Diámetro mínimo','cm',1.2),Sel('m','Ventilación',[['e','Espontánea'],['v','Mecánica controlada']])],
+ f(v){const c=(v.mx-v.mn)/v.mx*100,d=(v.mx-v.mn)/v.mn*100,f=(v.mx-v.mn)/((v.mx+v.mn)/2)*100;
+  if(v.m==='e'){const p=v.mx<=2.1&&c>50?[3,'0–5']:v.mx>2.1&&c<50?[15,'10–20']:[8,'5–10'];
+   return[R('Índice de colapsabilidad',c,0,'%',c>40?'ok':'',c>40?'> 40 %: respuesta a fluidos probable':'≤ 40 %: no descarta respuesta a fluidos'),R('PAD estimada',p[0],0,'mmHg',p[0]===15?'warn':'',`Rango ${p[1]} mmHg (criterio ASE, sin cotejar)`)]}
+  return[R('Índice de distensibilidad',d,0,'%',d>18?'ok':'',d>18?'> 18 %: probable respondedor a fluidos':'≤ 18 %: probable no respondedor'),R('ΔVCI (sobre el promedio)',f,0,'%',f>12?'ok':'',f>12?'> 12 %: probable respondedor':'≤ 12 %'),R('Colapsabilidad',c,0,'%')]},
+ fx:'Colapsabilidad = (Dmáx − Dmín) / Dmáx\nDistensibilidad = (Dmáx − Dmín) / Dmín\nΔVCI = (Dmáx − Dmín) / [(Dmáx + Dmín) / 2]\n\nPAD (ASE): ≤ 2,1 cm y colapso > 50 % → 3 mmHg\n           > 2,1 cm y colapso < 50 % → 15 mmHg\n           resto → 8 mmHg',
+ n:'Ventilación espontánea: en el estudio de Muller la VCI se midió en eje largo subcostal, con modo M a 2–3 cm de la aurícula derecha, tomando máximo y mínimo de un mismo ciclo respiratorio. El mejor corte fue 40 %, con área bajo la curva de 0,77, valor predictivo positivo de 72 % y negativo de 83 %; los autores concluyen que no predice de forma confiable y que un valor bajo no descarta respuesta a fluidos. Ventilación mecánica: un metaanálisis de 8 estudios halló un umbral medio de variación de 15,4 % (IC 95 % 13,3–17,6) con área bajo la curva de 0,83, por debajo de la variación de presión de pulso y de volumen sistólico; las dos formas de calcular la variación se aceptan por igual. Los cortes de 18 % y 12 % y la estimación de PAD siguen sin cotejar contra sus originales.',
+ ref:'Muller 2012 (Crit Care); Chaves 2024 (Crit Care); Barbier 2004; Feissel 2004; Rudski 2010.'},
+{s:'vol',id:'dv',t:'Variación respiratoria del pico aórtico',sub:'Respuesta a fluidos en VM controlada',
+ i:[N('mx','Vpico máximo','cm/s',110),N('mn','Vpico mínimo','cm/s',95)],
+ f(v){const d=(v.mx-v.mn)/((v.mx+v.mn)/2)*100;return[R('ΔVpico',d,1,'%',d>12?'ok':'',d>12?'> 12 %: probable respondedor':'≤ 12 %: probable no respondedor')]},
+ fx:'ΔVpico = (Vmáx − Vmín) / [(Vmáx + Vmín) / 2] · 100',n:'Mismas condiciones que la variación de presión de pulso: VM controlada, Vt ≥ 8 mL/kg, ritmo sinusal, tórax cerrado, sin falla del VD.',ref:'Feissel 2001.'},
+{s:'vol',id:'pla',t:'Cambio de VTI tras una maniobra',sub:'Elevación pasiva de piernas, minibolo o carga',
+ i:[N('a','VTI basal','cm',16),N('b','VTI posmaniobra','cm',18.4),Sel('m','Maniobra',[['10','Elevación pasiva de piernas (≥ 10 %)'],['10b','Minibolo 100 mL (≥ 10 %)'],['15','Carga de fluidos (≥ 15 %)']])],
+ f(v){const d=(v.b-v.a)/v.a*100,c=parseInt(v.m);return[R('ΔVTI',d,1,'%',d>=c?'ok':'',d>=c?`≥ ${c} %: respondedor`:`< ${c} %: no respondedor`)]},
+ fx:'ΔVTI = (VTI pos − VTI basal) / VTI basal · 100',n:'Elevación pasiva: partir de semisentado a 45°, medir el máximo dentro de los 60–90 s. Promediar 3 latidos (5–10 en FA) con el mismo ángulo de insonación. Para la carga de fluidos, el estudio de Muller de 2012 definió respuesta como un aumento del VTI subaórtico de 15 % o más tras 500 mL en 15 minutos, con el VTI medido por Doppler pulsado en apical 5 cámaras y por triplicado. Los cortes de elevación pasiva de piernas y de minibolo siguen sin cotejar.',ref:'Muller 2012 (Crit Care); Monnet 2006; Muller 2011.'},
+{s:'vol',id:'vexus',t:'VExUS',sub:'Grado de congestión venosa',
+ i:[Sel('c','VCI',[['0','< 2 cm'],['1','≥ 2 cm']]),Sel('h','Vena suprahepática',[['0','Normal (S > D)'],['1','Leve (S < D)'],['2','Severo (S invertida)']]),Sel('p','Vena porta (pulsatilidad)',[['0','Normal (< 30 %)'],['1','Leve (30–49 %)'],['2','Severo (≥ 50 %)']]),Sel('r','Venas intrarrenales',[['0','Normal (continuo)'],['1','Leve (bifásico discontinuo)'],['2','Severo (monofásico diastólico)']])],
+ f(v){if(v.c==='0')return[R('VExUS','Grado 0',0,'','ok','VCI < 2 cm: sin congestión')];
+  const n=[v.h,v.p,v.r].filter(x=>x==='2').length;
+  const g=n===0?['Grado 1','ok','Congestión leve: patrones normales o levemente alterados']:n===1?['Grado 2','warn','Congestión moderada: un patrón severo']:['Grado 3','crit','Congestión severa: dos o más patrones severos'];
+  return[R('VExUS',g[0],0,'',g[1],g[2])]},
+ fx:'Grado 0: VCI < 2 cm\nGrado 1: VCI ≥ 2 cm sin patrones severos\nGrado 2: VCI ≥ 2 cm + 1 patrón severo\nGrado 3: VCI ≥ 2 cm + ≥ 2 patrones severos',n:'VCI: diámetro máximo durante el ciclo respiratorio, en su porción intrahepática a 2 cm de la unión con las suprahepáticas, en eje largo subxifoideo o lateral derecho a través del hígado. Usar ECG simultáneo para identificar las fases de la suprahepática. El grado 3 (VCI ≥ 2 cm con al menos dos patrones severos) al ingreso a terapia tras cirugía cardíaca tuvo especificidad de 96 % y sensibilidad de 27 % para lesión renal aguda (razón de verosimilitud positiva 6,37). Se desarrolló en una cohorte de cirugía cardíaca que excluyó cirrosis y trombosis portal. La pulsatilidad portal y la VCI dilatada se describieron también en voluntarios sanos atléticos. Los grados 0 a 2 están definidos en una figura del artículo que no pude leer como texto.',ref:'Beaubien-Souligny 2020 (Ultrasound J).'},
+{s:'vol',id:'porta',t:'Fracción de pulsatilidad portal',sub:'Para el ítem porta del VExUS',
+ i:[N('mx','Velocidad máxima','cm/s',25),N('mn','Velocidad mínima','cm/s',15)],
+ f(v){const p=(v.mx-v.mn)/v.mx*100;return[R('Pulsatilidad',p,0,'%',p>=50?'crit':p>=30?'warn':'ok',p>=50?'≥ 50 %: severo':p>=30?'30–49 %: leve':'< 30 %: normal')]},
+ fx:'FP = (Vmáx − Vmín) / Vmáx · 100',n:'El artículo clasifica como leve una fracción de 30–49 % y como severa una mayor de 50 %. La fórmula de la fracción no figura en el texto cotejado.',ref:'Beaubien-Souligny 2020 (Ultrasound J).'},
+/* ---------- GÁSTRICO ---------- */
+{s:'gast',id:'antro',t:'Volumen gástrico por área antral',sub:'Adultos, modelo de Perlas',
+ i:[N('ap','Diámetro anteroposterior','cm',2.4),N('cc','Diámetro craneocaudal','cm',3.6),N('ed','Edad','años',50),N('p','Peso','kg',75),Sel('pos','Posición durante la medición',[['d','Decúbito lateral derecho'],['s','Supino o semisentado']]),Sel('q','Contenido en el antro',[['l','Vacío o líquido claro'],['s','Sólido o líquido espeso']])],
+ f(v){const a=PI*v.ap*v.cc/4,o=[R('Área antral',a,2,'cm²')];
+  if(v.q==='s'){o.push(R('Riesgo','Alto',0,'','crit','Contenido sólido o espeso: estómago lleno sin importar el volumen'));return o}
+  if(v.pos==='s'){o.push(R('Volumen gástrico','No aplica',0,'','warn','La fórmula solo vale con el área medida en decúbito lateral derecho'));return o}
+  const vol=Math.max(0,27+14.6*a-1.28*v.ed),k=vol/v.p;
+  o.push(R('Volumen gástrico',vol,0,'mL'),R('Volumen por peso',k,2,'mL/kg',k>1.5?'crit':'ok',k>1.5?'> 1,5 mL/kg: estómago de riesgo':'≤ 1,5 mL/kg'));return o},
+ fx:'Área = π · AP · CC / 4\nVolumen (mL) = 27,0 + 14,6 · Área en DLD (cm²) − 1,28 · edad (años)',
+ n:'Diámetros de serosa a serosa, con el antro relajado entre ondas peristálticas, en un plano sagital del epigastrio con el lóbulo hepático izquierdo y la aorta como referencias. El modelo predice volúmenes de 0 a 500 mL en adultos con IMC < 40. Estómago de riesgo: más de 1,5 mL/kg; en anestesia también se usó 0,8 mL/kg. En terapia intensiva, para guiar la nutrición enteral se propusieron cortes de área antral que dependen de la posición y no son intercambiables: menos de 6 cm² como favorable y 6 cm² o más como alerta; 9 cm² o menos asociado a inicio exitoso de nutrición enteral en una sola cohorte sin validación externa; y 5,48 cm² en supino (sensibilidad 88 %, especificidad 58 %) para predecir intolerancia.',
+ ref:'Perlas 2013; Van de Putte y Perlas 2014; Pérez-Calatayud 2023; Weidner 2026; Ruiz Ávila 2025; Elbardan 2025.'},
+{s:'gast',id:'antroped',t:'Volumen gástrico pediátrico',sub:'Modelo de Spencer',
+ i:[N('ap','Diámetro anteroposterior','cm',1.5),N('cc','Diámetro craneocaudal','cm',2.2),N('ed','Edad','meses',60),N('p','Peso','kg',20)],
+ f(v){const a=PI*v.ap*v.cc/4,vol=Math.max(0,-7.8+3.5*a+0.127*v.ed),k=vol/v.p;
+  return[R('Área antral (DLD)',a,2,'cm²'),R('Volumen gástrico',vol,1,'mL'),R('Volumen por peso',k,2,'mL/kg',k>1.25?'crit':'ok',k>1.25?'> 1,25 mL/kg: estómago de riesgo':'≤ 1,25 mL/kg')]},
+ fx:'Volumen (mL) = −7,8 + 3,5 · Área DLD (cm²) + 0,127 · edad (meses)',n:'Área en decúbito lateral derecho. Contenido sólido equivale a estómago lleno.',ref:'Spencer 2015.'},
+/* ---------- NUTRICIÓN ENTERAL ---------- */
+{s:'nut',id:'vrg',t:'Volumen residual gástrico por ecografía',sub:'Modelo de Perlas y conducta sobre la infusión',
+ i:[N('ap','Diámetro anteroposterior','cm',3.2),N('cc','Diámetro craneocaudal','cm',5.0),N('ed','Edad','años',60)],
+ f(v){const a=PI*v.ap*v.cc/4,vol=Math.max(0,27+14.6*a-1.28*v.ed);
+  const c=vol>500?['crit','> 500 mL: suspender la infusión 2 h y reevaluar']:vol>=250?['warn','250–500 mL: mantener la misma velocidad']:['ok','< 250 mL: aumentar hacia la meta calórica'];
+  return[R('Área antral (DLD)',a,2,'cm²'),R('Volumen residual',vol,0,'mL',c[0],c[1])]},
+ fx:'Área = π · AP · CC / 4\nVolumen (mL) = 27,0 + 14,6 · Área en DLD (cm²) − 1,28 · edad (años)\n\n> 500 mL: suspender 2 h\n250–500 mL: mantener la velocidad\n< 250 mL: aumentar la infusión',
+ n:'Regla usada en el estudio de Elbardan, con control ecográfico antes de iniciar y cada 6 h. La guía ESICM sugiere demorar la nutrición enteral con aspirado gástrico mayor de 500 mL en 6 h, y que un volumen alto aislado lleve a procinéticos y reevaluación, no a una suspensión prolongada. Pérez-Calatayud propone evitar la nutrición enteral con volumen calculado mayor de 400 mL hasta definir un plan. El modelo de Perlas predice hasta 500 mL: por encima, el número es solo orientativo. Área medida en decúbito lateral derecho.',
+ ref:'Elbardan 2025; Reintam Blaser 2017 (guía ESICM); Pérez-Calatayud 2023.'},
+{s:'nut',id:'aant',t:'Área antral y nutrición enteral',sub:'Cortes propuestos en terapia intensiva',
+ i:[N('ap','Diámetro anteroposterior','cm',2.4),N('cc','Diámetro craneocaudal','cm',3.6),Sel('pos','Posición durante la medición',[['d','Decúbito lateral derecho'],['s','Supino o semisentado']])],
+ f(v){const a=PI*v.ap*v.cc/4,o=[R('Área antral',a,2,'cm²'),
+   R('Marco de Weidner',a<6?'Favorable':'Alerta',0,'',a<6?'ok':'warn',a<6?'< 6 cm²':'≥ 6 cm²; también es alerta un área en aumento'),
+   R('Modelo de Lai',a<=9?'Cumple':'No cumple',0,'',a<=9?'ok':'warn','≤ 9 cm²: asociado a inicio y progresión exitosos'),
+   R('Protocolo de Li',a<3.4?'< 3,4':a<10?'3,4–10':'≥ 10',0,'cm²',a<3.4?'ok':a<10?'warn':'crit',a<3.4?'Fórmula polimérica':a<10?'Fórmula polimérica y reducir fármacos que dañan la integridad digestiva':'Fórmula peptídica, procinéticos y vía pospilórica si hace falta')];
+  if(v.pos==='s')o.push(R('Corte en supino',a>=5.48?'≥ 5,48':'< 5,48',0,'cm²',a>=5.48?'warn':'ok','5,48 cm²: sensibilidad 88 % y especificidad 58 % para intolerancia'));return o},
+ fx:'Área = π · AP · CC / 4',
+ n:'Los cortes dependen de la posición, la población y el desenlace, y no son intercambiables entre supino y decúbito lateral derecho. El valor de 9 cm² proviene de una sola cohorte retrospectiva de pacientes con lesión gastrointestinal aguda grado II, sin validación externa y con mediciones mayormente en decúbito lateral derecho. Los cortes de Li surgen de un consenso Delphi. En el estudio de Ruiz Ávila, una medición única y aleatoria del área no predijo bien la intolerancia. Hacer mediciones seriadas en la misma posición y plano.',
+ ref:'Weidner 2026; Lai 2022 (citado en Weidner y Mihnovits); Li 2024; Ruiz Ávila 2025.'},
+{s:'nut',id:'lai',t:'Modelo de Lai para iniciar nutrición enteral',sub:'Estómago, colon y motilidad colónica',
+ i:[N('a','Área antral','cm²',7.5),N('d','Diámetro del colon','cm',2.6),N('p','Peristaltismo colónico','por min',4)],
+ f(v){const c=[v.a<=9,v.d<=2.9,v.p>3],n=c.filter(Boolean).length,t=(b,y,x)=>R(y,b?'Cumple':'No cumple',0,'',b?'ok':'warn',x);
+  return[t(c[0],'Área antral','≤ 9 cm²'),t(c[1],'Diámetro del colon','≤ 2,9 cm'),t(c[2],'Peristaltismo','> 3 contracciones por minuto'),
+   R('Criterios cumplidos',n+' de 3',0,'',n===3?'ok':'warn',n===3?'Los tres: asociado a inicio y progresión exitosos':'Evaluación incompleta para iniciar')]},
+ fx:'Área antral ≤ 9 cm²\nDiámetro del colon ≤ 2,9 cm\nPeristaltismo colónico > 3 por minuto',
+ n:'El diámetro se mide en colon ascendente derecho o descendente izquierdo y no se aplica al intestino delgado. La combinación de los tres parámetros tuvo un área bajo la curva de 0,95, mejor que cada uno por separado. Derivado en una sola cohorte retrospectiva de 105 pacientes con lesión gastrointestinal aguda grado II; sin validación externa.',
+ ref:'Lai 2022 (según Weidner 2026, Mihnovits 2024 y Pérez-Calatayud 2023).'},
+{s:'nut',id:'umat',t:'Test de acomodación gástrica a la comida',sub:'Cambio del área antral a los 60 minutos',
+ i:[N('p','Área tras la comida','cm²',14),N('f','Área a los 60 min','cm²',6),N('b','Área basal','cm²',4.5,1)],
+ f(v){const d=(v.p-v.f)/v.p*100;return[R('Cambio del área',d,0,'%',d>50?'ok':'warn',d>50?'> 50 %: tolerancia probable':'≤ 50 %: no alcanza el criterio')]},
+ fx:'Cambio (%) = (Área tras la comida − Área a los 60 min) / Área tras la comida · 100',
+ n:'Cabecera a 30°. Medir primero el área basal: si hay estómago de riesgo, suspender el test. Administrar 500 mL de una comida líquida baja en proteínas (10 g) en 2 minutos y repetir la medición a los 60 minutos. Con un cambio de 52 %, sensibilidad 50 % y especificidad 88,9 %; la probabilidad de tolerancia pasó de 85 % a 96 %. La fuente define el cambio como la diferencia entre ambas áreas sin aclarar el denominador; acá se expresa sobre el área posprandial.',
+ ref:'Pérez-Calatayud 2023.'},
+{s:'nut',id:'ams',t:'Flujo de la arteria mesentérica superior',sub:'Basal y tras el estímulo nutricional',
+ i:[N('d','Diámetro de la AMS','mm',6.5),N('t','TAMV basal','cm/s',35),N('t2','TAMV tras el estímulo','cm/s',55,1),N('d2','Diámetro tras el estímulo','mm',null,1)],
+ f(v){const A=d=>PI*(d/10)**2/4,a=A(v.d),q=v.t*a,o=[R('Área de sección',a,2,'cm²'),R('Flujo basal',q,1,'mL/s'),R('Flujo basal',q*60,0,'mL/min')];
+  if(has(v.t2)){const q2=v.t2*(has(v.d2)?A(v.d2):a),p=q2/q*100;o.push(R('Flujo tras el estímulo',q2,1,'mL/s'),R('Cambio respecto del basal',p,0,'%',p<100?'warn':'ok',p<100?'Menor que el basal':'Mayor que el basal'))}return o},
+ fx:'Área = π · (d/2)²\nFlujo = TAMV · Área\nCambio (%) = Flujo tras el estímulo / Flujo basal · 100   (100 % = sin cambio)',
+ n:'Medir en el segmento proximal, a 1–2 cm del origen en la aorta, en supino tras 5 minutos de reposo, con el menor ángulo de insonación posible; promediar tres lecturas de velocidad y tres de área. En el estudio original el área se midió en el corte transversal; acá se calcula a partir del diámetro. Medianas publicadas del cambio: 268 % tras comida oral en voluntarios, 152–153 % tras estímulo enteral y 42 % (descenso) tras estímulo parenteral; flujo en ayunas de 10,5 a 14,5 mL/s. No hay un punto de corte validado.',
+ ref:'Gatt 2009.'},
+{s:'nut',id:'guts',t:'Umbrales del protocolo GUTS',sub:'Estómago, intestino delgado y colon',
+ i:[N('pg','Pared gástrica','mm',2.5,1),N('di','Diámetro del intestino delgado','mm',28,1),N('pi','Pared del intestino delgado','mm',2.5,1),N('mi','Peristaltismo del delgado','por min',2,1),N('dc','Diámetro del colon','mm',45,1),N('pc','Pared del colon','mm',3,1)],
+ f(v){const o=[],t=(x,l,u,bad,tb,tg,d)=>{if(has(x))o.push(R(l,x,d,u,bad?'warn':'ok',bad?tb:tg))};
+  t(v.pg,'Pared gástrica','mm',v.pg>3,'> 3 mm: patológico','≤ 3 mm',1);t(v.di,'Diámetro del delgado','mm',v.di>25,'> 25 mm: dilatado','≤ 25 mm',0);
+  t(v.pi,'Pared del delgado','mm',v.pi>3,'> 3 mm: patológico','≤ 3 mm',1);t(v.mi,'Peristaltismo del delgado','/min',v.mi<3,'< 3 por minuto: hipomotilidad','≥ 3 por minuto',0);
+  t(v.dc,'Diámetro del colon','mm',v.dc>60,'> 60 mm: dilatado','≤ 60 mm',0);t(v.pc,'Pared del colon','mm',v.pc>4,'> 4 mm: patológico','≤ 4 mm',1);return o},
+ fx:'Estómago: pared > 3 mm\nIntestino delgado: pared > 3 mm, diámetro > 25 mm, peristaltismo < 3 por minuto\nColon: pared > 4 mm, diámetro > 60 mm',
+ n:'Cargá solo lo que mediste; todos los campos son opcionales. El protocolo considera además como hallazgos de alarma el líquido libre mayor de 1 cm y la neumatosis. Requiere 10 a 15 minutos y experiencia del operador. El puntaje AGIUS no está incluido: el material cotejado no trae su tabla de puntuación.',
+ ref:'Protocolo GUTS (Pérez-Calatayud 2018), según la tabla de Weidner 2026.'},
+{s:'nut',id:'mi',t:'Velocidad de infusión según motilidad antral',sub:'Protocolo guiado por ecografía',
+ i:[N('m','Índice de motilidad antral','',0.6)],
+ f(v){const r=v.m<0.4?'20':v.m<0.8?'40–60':'70–125';return[R('Velocidad sugerida',r,0,'mL/h',v.m<0.4?'warn':'ok',v.m<0.4?'IM < 0,4':v.m<0.8?'IM de 0,4 a 0,8':'IM ≥ 0,8')]},
+ fx:'IM < 0,4: 20 mL/h\nIM 0,4 a < 0,8: 40–60 mL/h\nIM ≥ 0,8: 70–125 mL/h',
+ n:'Surge de un consenso Delphi de expertos, no de un ensayo. El material cotejado no incluye la fórmula del índice de motilidad antral, por eso se carga el valor ya calculado.',
+ ref:'Li 2024.'},
+/* ---------- OTROS ---------- */
+{s:'otros',id:'balik',t:'Volumen de derrame pleural',sub:'Fórmula de Balik',
+ i:[N('s','Separación pleural máxima','mm',30)],
+ f(v){const x=20*v.s;return[R('Volumen',x,0,'mL',x>=500?'warn':'',x>=500?'≥ 500 mL':'')]},
+ fx:'V (mL) = 20 · Sep (mm)',n:'Paciente en supino con cabecera a 15°, sonda transversal en línea axilar posterior a nivel de la base, medición al final de la espiración.',ref:'Balik 2006.'},
+{s:'otros',id:'diaf',t:'Fracción de engrosamiento diafragmático',sub:'Zona de aposición, sonda lineal',
+ i:[N('e','Espesor al final de la espiración','mm',2.0),N('i','Espesor al final de la inspiración','mm',2.7)],
+ f(v){const f=(v.i-v.e)/v.e*100;return[R('Fracción de engrosamiento',f,0,'%',f<20?'crit':f<30?'warn':'ok',f<20?'< 20 %: disfunción diafragmática':f<30?'20–29 %: limítrofe':'≥ 30 %: favorece destete exitoso'),R('Espesor espiratorio',v.e,1,'mm',v.e<2?'warn':'',v.e<2?'< 2 mm: atrofia':'')]},
+ fx:'FE = (Tinsp − Tesp) / Tesp · 100',n:'Medir en prueba de ventilación espontánea o con soporte mínimo. Excursión normal en reposo > 1 cm (subcostal, modo M).',ref:'DiNino 2014.'},
+{s:'otros',id:'elip',t:'Volumen de un elipsoide',sub:'Vejiga, próstata, colecciones',
+ i:[N('a','Largo','cm',8),N('b','Ancho','cm',7),N('c','Alto','cm',6)],
+ f(v){return[R('Volumen',0.52*v.a*v.b*v.c,0,'mL')]},
+ fx:'V = 0,52 · L · A · H     (π/6 ≈ 0,52)',n:'Para vejiga algunos equipos usan coeficientes de 0,65–0,75 según la forma.',ref:''},
+{s:'otros',id:'irr',t:'Índice de resistencia renal',sub:'Arterias interlobares o arcuatas',
+ i:[N('vs','VPS','cm/s',40),N('vd','VFD','cm/s',12)],
+ f(v){const r=(v.vs-v.vd)/v.vs;return[R('IR',r,2,'',r>0.7?'warn':'ok',r>0.7?'> 0,70: elevado':'≤ 0,70: normal')]},
+ fx:'IR = (VPS − VFD) / VPS',n:'Promediar 3 mediciones (polo superior, medio e inferior). Depende de la presión de pulso, la FC y la edad.',ref:''},
+{s:'otros',id:'blue',t:'Protocolo BLUE',sub:'Ecografía pulmonar en insuficiencia respiratoria aguda',
+ i:[Sel('s','Deslizamiento pulmonar anterior',[['1','Presente'],['0','Ausente']]),Sel('p','Patrón anterior',[['a','Líneas A predominantes en ambos lados'],['b','Líneas B bilaterales (3 o más por campo)'],['ab','Líneas B de un lado y A del otro'],['c','Consolidación anterior']]),Sel('lp','Punto pulmonar',[['0','No'],['1','Sí']]),Sel('t','Trombosis venosa',[['0','Ausente'],['1','Presente'],['x','No evaluada']]),Sel('pl','PLAPS (consolidación o derrame posterolateral)',[['0','No'],['1','Sí']])],
+ f(v){const out=(p,d,lv,perf)=>[R('Perfil',p,0,'',lv,d),R('Rendimiento en el estudio',perf,0,'')];
+  if(v.p==='c')return out('C','Neumonía','','S 21,5 % · E 99 %');
+  if(v.p==='ab')return out('A/B','Neumonía','','S 14,5 % · E 100 %');
+  if(v.p==='b')return v.s==='1'?out('B','Edema pulmonar','','S 97 % · E 95 %'):out('B′','Neumonía','','S 11 % · E 100 %');
+  if(v.s==='0')return v.lp==='1'?out('A′ + punto pulmonar','Neumotórax','','S 88 % · E 100 %'):out('A′','Sin punto pulmonar: neumotórax no confirmado; el estudio lo agrupó con EPOC o asma','warn','—');
+  if(v.t==='1')return out('A + trombosis','Embolia pulmonar','','S 81 % · E 99 %');
+  if(v.t==='x')return out('A','Falta el análisis venoso para seguir el algoritmo','warn','—');
+  return v.pl==='1'?out('A + PLAPS','Neumonía','','S 42 % · E 96 %'):out('Normal','EPOC o asma','','S 89 % · E 97 %')},
+ fx:'1. Deslizamiento anterior ausente + líneas A + punto pulmonar → neumotórax\n2. Perfil B (líneas B bilaterales con deslizamiento) → edema pulmonar\n3. Perfil B′, A/B o C → neumonía\n4. Perfil A + trombosis venosa → embolia pulmonar\n5. Perfil A sin trombosis: con PLAPS → neumonía; sin PLAPS → EPOC o asma',
+ n:'Estudio observacional en 260 pacientes de terapia intensiva con diagnóstico definido; el algoritmo acertó en 90,5 % al aplicarse en forma retrospectiva. Los perfiles de neumonía por separado son poco sensibles; combinados alcanzan sensibilidad de 89 % y especificidad de 94 %. Limitaciones: no distingue bien edema pulmonar de neumonía intersticial, no detecta embolia sin trombosis visible, y excluyó enfermedad intersticial crónica, derrame masivo y pacientes con más de un diagnóstico. No incluye ecocardiografía. Para neumotórax el resumen informa sensibilidad de 81 % y la tabla 88 %. El análisis venoso abarca yugular interna, subclavia y eje iliofemoropoplíteo.',
+ ref:'Lichtenstein y Mezière 2008 (Chest).'},
+{s:'otros',id:'exdiaf',t:'Excursión diafragmática',sub:'Modo M, comparada con el límite inferior normal',
+ i:[N('e','Excursión','cm',1.4),Sel('sx','Sexo',[['m','Varón'],['f','Mujer']]),Sel('mn','Maniobra',[['q','Respiración tranquila'],['s','Inspiración brusca (sniff)'],['d','Respiración profunda']])],
+ f(v){const L={q:{m:1.0,f:0.9},s:{m:1.8,f:1.6},d:{m:4.7,f:3.7}}[v.mn][v.sx],b=v.e<L,t=L.toLocaleString('es-AR',{minimumFractionDigits:1});
+  return[R('Excursión',v.e,1,'cm',b?'warn':'ok',b?`Por debajo del límite inferior normal (${t} cm)`:`En rango normal (límite inferior ${t} cm)`)]},
+ fx:'Límite inferior normal (mujer / varón)\nRespiración tranquila: 0,9 / 1,0 cm\nInspiración brusca: 1,6 / 1,8 cm\nRespiración profunda: 3,7 / 4,7 cm',
+ n:'Valores de 210 adultos sanos. En respiración profunda el pulmón suele tapar el diafragma: del lado izquierdo se pudo medir solo en 45 de 210 personas. Son valores de referencia en sanos, no puntos de corte para destete.',
+ ref:'Boussuges 2009 (Chest).'}
+];
+/* ---------- SONDA Y VENTANA ---------- */
+const SONDAS={sect:'Sectorial (phased array) 1–5 MHz',lin:'Lineal 7–15 MHz',conv:'Convexa 2–5 MHz'};
+const PLS='Paraesternal eje largo: 3.er–4.º espacio intercostal izquierdo junto al esternón, marcador hacia el hombro derecho.';
+const A4C='Apical 4 cámaras: sobre el choque de la punta, marcador hacia la izquierda del paciente.';
+const ANTRO_ST=['Explorar primero en supino y después en decúbito lateral derecho; el área para la fórmula se mide en decúbito lateral derecho.','Plano correcto: el antro aparece entre el lóbulo hepático izquierdo (adelante) y el páncreas (atrás), con la aorta o la cava por detrás.','Medir entre contracciones los dos diámetros perpendiculares incluyendo todo el espesor de la pared (serosa a serosa), o trazar el área a mano alzada.'];
+const VIEWS={
+tt:{s:['sect'],pre:'Transcraneal (DTC). En dúplex, el hueso contralateral se ve a 12–15 cm y confirma una ventana adecuada.',fig:'head',pts:['tt'],
+ pos:['Ventana transtemporal: por encima del arco cigomático, entre el trago y la pared lateral de la órbita (depresión palpable de 3–4 cm en la sien). Marcador hacia adelante, hacia los ojos.'],
+ st:['Plano mesencefálico: pedúnculos como una mariposa hipoecoica en el centro. Con color, la ACM del mismo lado va hacia la sonda (rojo) a 45–60 mm.','Doppler pulsado sobre M1 con volumen de muestra de 5–10 mm, sin corrección de ángulo. Medir sobre la envolvente de 3 a 5 latidos.','Entre el 10 y el 15 % de los pacientes no tiene ventana temporal útil.']},
+lind:{s:['sect'],pre:'Transcraneal (DTC).',fig:'head',pts:['tt','sm'],
+ pos:['ACM por ventana transtemporal, a 45–60 mm de profundidad.','ACI extracraneal por ventana submandibular: bajo el ángulo de la mandíbula, haz hacia arriba y algo hacia medial. El flujo se aleja de la sonda a 40–60 mm.'],
+ st:['Medir los dos vasos del mismo lado y en el mismo momento.','Usar la velocidad media de la envolvente en ambos.']},
+sviri:{s:['sect'],pre:'Transcraneal (DTC).',fig:'head',pts:['so'],
+ pos:['Ventana suboccipital: en la línea media, entre el borde posterior del foramen magno y la apófisis espinosa de C1, con el haz dirigido al puente de la nariz.'],
+ st:['Vertebrales intracraneales a 60–80 mm y basilar a 80–100 mm o más; ambas se alejan de la sonda (azul).','Vertebral extracraneal: en el cuello alto, por detrás y debajo de la mastoides.','En decúbito, girar la cabeza o lateralizar al paciente para llegar a la nuca.']},
+vno:{s:['lin'],pre:'Oftálmico u ocular, con índice mecánico e índice térmico bajos. Sonda de 7,5 MHz.',fig:'eye',pts:[],pos:[],
+ st:['Paciente en supino con cabecera a 30°, ojos cerrados y mirada al frente. Gel abundante sobre el párpado; apoyar la mano en la frente o el pómulo y no presionar el globo.','Plano transversal con el marcador hacia la derecha del paciente; plano sagital con el marcador hacia la cabeza.','Centrar el nervio, ubicarse 3 mm detrás de la retina y trazar el calibre perpendicular al eje, entre los bordes externos de la vaina.']},
+dlm:{s:['sect'],pre:'Transcraneal en dúplex.',fig:'head',pts:['tt'],
+ pos:['Ventana transtemporal de cada lado, misma técnica que para la ACM.'],
+ st:['Desde el plano mesencefálico, inclinar el haz unos 10° hacia arriba hasta el plano diencefálico: el tercer ventrículo se ve como dos líneas paralelas pulsátiles, a menos de 10 mm entre sí, algo por arriba y por delante del mesencéfalo.','Medir desde el origen del haz hasta el centro del tercer ventrículo. Repetir desde el lado opuesto.']},
+tsvi:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['pls','ap'],
+ pos:[PLS+' Diámetro del TSVI con zoom, en mesosístole, de borde interno a borde interno, a nivel del anillo aórtico.','Apical 5 cámaras: sobre el choque de la punta, marcador hacia la izquierda del paciente, inclinando el haz hacia adelante. Doppler pulsado 0,5 cm por debajo de la válvula aórtica para el VTI.'],
+ st:['Alinear el haz con el flujo (ángulo < 20°) y trazar la envolvente de 3 latidos, o de 5 a 10 en fibrilación auricular.','VTI aórtico (estenosis): Doppler continuo desde la misma vista; buscar la velocidad más alta también desde paraesternal derecho y supraesternal.']},
+plax:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['pls'],pos:[PLS],
+ st:['Medir perpendicular al eje largo del ventrículo, a nivel de la punta de las valvas mitrales, en fin de diástole y fin de sístole.','Con modo M, el cursor tiene que cruzar septum y pared posterior en ángulo recto; si queda oblicuo, medir en 2D.']},
+ap2:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['ap'],pos:[A4C+' Rotar unos 60° en sentido antihorario para 2 cámaras.'],
+ st:['Evitar el acortamiento del ápex: bajar un espacio intercostal si el ventrículo se ve redondeado.','Trazar el borde endocárdico en fin de diástole y fin de sístole, dejando músculos papilares y trabéculas dentro de la cavidad.']},
+vd:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['ap'],pos:[A4C+' Desplazar algo hacia medial para centrar el ventrículo derecho.'],
+ st:['Doppler continuo sobre el jet de insuficiencia tricuspídea guiado por color; quedarse con la velocidad más alta entre apical, paraesternal de entrada del VD y subcostal.','TAPSE: modo M sobre el anillo tricuspídeo lateral, con el cursor alineado al movimiento longitudinal.']},
+tsvd:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['pss'],
+ pos:['Paraesternal eje corto de grandes vasos: desde el eje largo, rotar 90° en sentido horario (marcador hacia el hombro izquierdo) e inclinar hacia la base.'],
+ st:['Doppler pulsado en el TSVD, justo antes de la válvula pulmonar. Tiempo de aceleración: del inicio del flujo al pico. VTI: envolvente del mismo trazado.','Para la resistencia pulmonar, la Vmáx de la insuficiencia tricuspídea se mide desde apical 4 cámaras.']},
+mitral:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['ap'],pos:[A4C],
+ st:['Llenado mitral: Doppler pulsado con muestra de 1–3 mm en la punta de las valvas. Doppler tisular en el anillo septal y lateral para e′.','Estenosis o insuficiencia mitral: Doppler continuo alineado con el jet. Para PISA, bajar la línea de base del color en la dirección del jet hasta 30–40 cm/s y medir el radio en mesosístole.']},
+qpqs:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['pls','ap'],
+ pos:['Paraesternal: diámetro del TSVI en eje largo; rotando a eje corto de grandes vasos, diámetro y VTI del TSVD.','Apical 5 cámaras: VTI del TSVI con Doppler pulsado.'],
+ st:['El diámetro del TSVD es la medida menos reproducible: promediar varias.']},
+vci:{s:['sect','conv'],pre:'Cardíaco o abdominal.',fig:'torso',pts:['sub'],
+ pos:['Subxifoidea longitudinal: bajo el apéndice xifoides, marcador hacia la cabeza, deslizando apenas a la derecha de la línea media.'],
+ st:['Confirmar que es la cava: atraviesa el hígado, recibe las suprahepáticas y entra a la aurícula derecha. La aorta queda a la izquierda, pulsa y tiene pared gruesa; ante la duda, el Doppler pulsado muestra un espectro venoso.','Medir a 2–3 cm de la aurícula derecha, o a 2 cm de la unión con las suprahepáticas, perpendicular al eje del vaso. El modo M ayuda a ver máximo y mínimo, pero el vaso se desplaza con la respiración: verificar en 2D.','Sin ventana subxifoidea, usar la transhepática por línea axilar media derecha.']},
+a5c:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['ap'],
+ pos:['Apical 5 cámaras: sobre el choque de la punta, marcador hacia la izquierda del paciente, inclinando el haz hacia adelante hasta abrir el TSVI.'],
+ st:['Doppler pulsado 0,5 cm por debajo de la válvula aórtica. No mover la sonda ni el volumen de muestra entre mediciones.','Velocidad de barrido lenta (25 mm/s) para ver varios ciclos respiratorios en la misma pantalla.']},
+vexus:{s:['conv','sect'],pre:'Abdominal. Escala de color baja (10–20 cm/s) para venas.',fig:'torso',pts:['sub','rax','ren'],
+ pos:['Subxifoidea: diámetro de la cava y, en transversal, venas suprahepáticas.','Línea axilar media derecha, intercostal: vena porta en el hilio hepático (paredes hiperecoicas) y suprahepáticas en coronal.','Flanco, línea axilar posterior: riñón en eje largo; con color, buscar los vasos interlobares.'],
+ st:['Doppler pulsado en cada vaso, en apnea breve si el paciente puede. En el riñón, la arteria queda por encima de la línea de base y la vena por debajo.','ECG simultáneo para identificar las ondas S y D de la suprahepática.']},
+antro:{s:['conv'],pre:'Abdominal. En personas delgadas alcanza con la lineal.',fig:'torso',pts:['epi'],
+ pos:['Epigastrio, plano sagital apenas a la derecha de la línea media, marcador hacia la cabeza.'],st:ANTRO_ST},
+antroped:{s:['lin','conv'],pre:'Abdominal o de partes blandas, según el tamaño del niño.',fig:'torso',pts:['epi'],
+ pos:['Epigastrio, plano sagital apenas a la derecha de la línea media, marcador hacia la cabeza.'],st:ANTRO_ST},
+pleura:{s:['conv','sect'],pre:'Abdominal o pulmonar.',fig:'torso',pts:['rax'],
+ pos:['Línea axilar posterior en la base del tórax, sonda transversal al eje del cuerpo, entre dos costillas. Mismo punto en cada hemitórax.'],
+ st:['Paciente en supino con cabecera a 15°.','Medir la separación máxima entre pleura parietal y visceral al final de la espiración.','Identificar siempre el diafragma para no confundir derrame con ascitis.']},
+diaf:{s:['lin'],pre:'Partes blandas o vascular, profundidad 3–4 cm.',fig:'torso',pts:['zap'],
+ pos:['Zona de aposición: 8.º–10.º espacio intercostal, entre línea axilar anterior y media, sonda perpendicular a la pared y marcador hacia la cabeza.'],
+ st:['El diafragma es la capa hipoecoica entre dos líneas hiperecoicas (pleura y peritoneo), a 1,5–3 cm de la piel.','Medir el espesor entre ambas líneas, sin incluirlas, al final de la espiración y al final de la inspiración. El modo M permite tomar los dos valores en el mismo punto.','Excursión: sonda convexa subcostal anterior apuntando a la cúpula, modo M.']},
+vejiga:{s:['conv'],pre:'Abdominal o pelviano.',fig:'torso',pts:['sp'],
+ pos:['Suprapúbica: justo por encima del pubis, inclinando el haz hacia la pelvis.'],
+ st:['Transversal (marcador hacia la derecha del paciente): ancho y alto. Sagital (marcador hacia la cabeza): largo.','Tomar cada diámetro en el punto de mayor tamaño.']},
+renal:{s:['conv'],pre:'Abdominal o renal. Escala de color baja.',fig:'torso',pts:['ren'],
+ pos:['Flanco, línea axilar posterior: riñón en eje largo.'],
+ st:['Con color, ubicar arterias interlobares (junto a las pirámides) o arcuatas (unión corticomedular).','Doppler pulsado con muestra de 2–4 mm, sin corrección de ángulo; ajustar la escala para que la onda ocupe buena parte de la pantalla.']}
+,umat:{s:['conv'],pre:'Abdominal, sonda curva de 2–5 MHz.',fig:'torso',pts:['epi'],
+ pos:['Epigastrio, plano parasagital, con el lóbulo hepático izquierdo y la aorta como referencias. Cabecera a 30°.'],
+ st:['Medir el área antral basal antes de dar la comida; si hay estómago de riesgo, suspender el test.','Repetir en el mismo plano y posición inmediatamente después de la comida y a los 60 minutos.']},
+ams:{s:['conv'],pre:'Abdominal o vascular abdominal.',fig:'torso',pts:['epi'],
+ pos:['Epigastrio, plano sagital sobre la aorta: la AMS nace de su cara anterior.'],
+ st:['Doppler pulsado en el segmento proximal, a 1–2 cm del origen, con el menor ángulo de insonación posible.','Diámetro o área de sección en modo B. Paciente en supino tras 5 minutos de reposo.','Promediar tres lecturas de velocidad media (TAMV) y tres de área.']},
+colon:{s:['conv'],pre:'Abdominal.',fig:'torso',pts:['epi','rcol','lcol'],
+ pos:['Epigastrio: antro gástrico en plano sagital.','Flanco derecho: colon ascendente.','Flanco izquierdo: colon descendente.'],
+ st:['Diámetro interno y espesor de pared en el segmento explorado.','Contar las contracciones durante un minuto completo en el mismo segmento.','El gas intestinal y los artefactos pueden impedir la medición.']}
+,mapse:{s:['sect'],pre:'Cardíaco.',fig:'torso',pts:['ap'],pos:[A4C],
+ st:['Modo M con el cursor sobre el anillo mitral septal y después sobre el lateral, alineado al movimiento longitudinal.','Medir del punto más bajo en fin de diástole al más alto en sístole.','Longitud del VI: del plano del anillo mitral al ápex, en fin de diástole.']},
+blue:{s:['conv','lin'],pre:'Pulmonar o abdominal. El estudio original usó una sonda microconvexa de 5 MHz.',fig:'torso',pts:['bua','bla','rax'],
+ pos:['Pared anterior, mitad superior.','Pared anterior, mitad inferior.','Pared lateral y posterolateral: búsqueda de PLAPS.'],
+ st:['Paciente semisentado, o en supino si está intubado. Cortes longitudinales. Repetir en el otro hemitórax.','El examen original se completó en menos de 3 minutos.','Sumar la exploración venosa cuando el perfil anterior es A.']},
+exdiaf:{s:['conv','sect'],pre:'Abdominal o cardíaco.',fig:'torso',pts:['rsc'],
+ pos:['Subcostal anterior derecha, apuntando hacia arriba y atrás para ver la porción posterior de la cúpula a través del hígado.'],
+ st:['Modo M con el cursor lo más perpendicular posible al movimiento de la cúpula.','Medir del pie al pico de la curva en cada maniobra.','Del lado izquierdo se usa el bazo como ventana y es más difícil.']}
+};
+const CK={
+epss:'fórmula 75,5 − 2,5·distancia, exclusiones y corte de 7 mm (Silverstein 2006; McKaigney 2014; resúmenes en PubMed).',
+blue:'definición de perfiles, orden de decisión, rendimiento y limitaciones (Lichtenstein y Mezière 2008, texto completo). El árbol es una figura; se armó desde el texto del artículo.',
+exdiaf:'límites inferiores normales por sexo y maniobra (Boussuges 2009, resumen en PubMed).',
+simp:'fórmula y rangos normales por sexo (Lang 2015).',
+fac:'solo el corte de 35 % para ventrículo derecho, citado en Beaubien-Souligny 2020. La guía original no se pudo leer en esa sección.',
+vci:'fórmulas de colapsabilidad y de variación, corte de 40 % en ventilación espontánea, sitio de medición y umbral medio en ventilación mecánica (Muller 2012; Chaves 2024). Cortes de 18 % y 12 % y estimación de PAD, sin cotejar.',
+vexus:'definición de patrones leves y severos de suprahepática, porta y venas renales, VCI ≥ 2 cm y grado 3 (Beaubien-Souligny 2020). Grados 0 a 2: definidos en una figura no legible como texto.',
+porta:'cortes de 30–49 % y mayor de 50 % (Beaubien-Souligny 2020).',
+pla:'criterio de 15 % para carga de fluidos y técnica del VTI (Muller 2012). Elevación pasiva de piernas y minibolo, sin cotejar.',
+vrg:'fórmula de Perlas y regla de conducta por volumen (Elbardan 2025; guía ESICM 2017; Pérez-Calatayud 2023).',
+aant:'cortes de área antral y sus limitaciones (Weidner 2026; Li 2024; Ruiz Ávila 2025; Mihnovits 2024).',
+lai:'los tres criterios y su origen (Weidner 2026; Mihnovits 2024; Pérez-Calatayud 2023).',
+umat:'procedimiento y criterio de cambio mayor de 50 % (Pérez-Calatayud 2023). El denominador del porcentaje no está explícito en la fuente.',
+ams:'fórmula de flujo, técnica y valores de referencia (Gatt 2009).',
+guts:'umbrales de la tabla del protocolo GUTS (Weidner 2026).',
+mi:'velocidades por rango de índice de motilidad (Li 2024). La fórmula del índice no figura en el material.',
+ip:'definición de IP e IR, con IP < 1,0 e IR < 0,75 como valores habituales en arterias cerebrales (Valdueza, Neurosonology and Neuroimaging of Stroke). Los rangos 0,6–1,1 y > 1,4 de esta tarjeta no figuran en el material.',
+pic:'criterio de IP 1,3 con VFD < 20 cm/s y fórmula 4,47·IP + 12,68 (consenso de Bruselas 2025; Martínez-Palacios 2023). La fórmula de Bellner no aparece en el material: sigue sin cotejar.',
+ppc:'fórmula de velocidad diastólica y umbral de 20–22 mmHg (Brain ultrasonography 2019; consenso de Bruselas 2025; Martínez-Palacios 2023). Belfort–Edouard y cortes de PPC, sin cotejar.',
+vno:'técnica, umbral de 6 mm, rango de cortes, relación VNO/globo y fórmula 5,00·VNO − 13,92 (consenso de Bruselas 2025; revisión de VNO en TEC 2024; Brain ultrasonography 2019).',
+dlm:'fórmula (A − B)/2, plano de medición y referencia de 5 mm (Brain ultrasonography 2019).',
+antro:'fórmula de área, modelo de Perlas con su rango de validez, umbral de 1,5 mL/kg, técnica y cortes de área en terapia intensiva (Pérez-Calatayud 2023; Weidner 2026; Ruiz Ávila 2025; Elbardan 2025; Wang 2022).',
+lind:'solo la definición del índice y la ventana submandibular (Brain ultrasonography 2019). Los puntos de corte no figuran en el material: sin cotejar.'};
+const VMAP={ip:'tt',pic:'tt',ppc:'tt',lind:'lind',sviri:'sviri',vno:'vno',dlm:'dlm',gc:'tsvi',ea:'tsvi',teich:'plax',masa:'plax',simp:'ap2',psap:'vd',tapse:'vd',tac:'tsvd',rvp:'tsvd',diast:'mitral',pht:'mitral',pisa:'mitral',dpdt:'mitral',qpqs:'qpqs',vci:'vci',dv:'a5c',pla:'a5c',vexus:'vexus',porta:'vexus',antro:'antro',antroped:'antroped',balik:'pleura',diaf:'diaf',elip:'vejiga',irr:'renal',vrg:'antro',aant:'antro',lai:'colon',umat:'umat',ams:'ams',guts:'colon',mi:'antro',epss:'plax',mapse:'mapse',fac:'vd',vdf:'vd',blue:'blue',exdiaf:'exdiaf'};
+if(typeof module!=='undefined')module.exports={CALCS,has,VIEWS,VMAP,CK};
+</script>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), main=$('#main'), tabs=$('#tabs'), q=$('#q');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(x,d)=>typeof x==='string'?x:Number.isFinite(x)?x.toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const byId=Object.fromEntries(CALCS.map(c=>[c.id,c]));
+let cur='all';
+try{cur=localStorage.getItem('eco-tab')||'all'}catch(e){}
+const h=location.hash.slice(1); if(h&&(h==='all'||SECTIONS.some(s=>s[0]===h)))cur=h;
+
+const HEADP={tt:[119,63],sm:[116,132,119,74],so:[79,122,160,68]};
+const TORSOP={pls:[124,74,-1,-1],pss:[124,74,1,-1],ap:[152,106,1,0],sub:[110,110,0,-1],epi:[104,116,0,-1],rax:[36,100,0,-1],ren:[42,144,0,-1],zap:[35,98,0,-1],sp:[110,184,-1,0],bua:[72,60,0,-1],bla:[74,90,0,-1],rsc:[82,124,0,-1],rcol:[42,140,0,-1],lcol:[178,140,0,-1]};
+const badge=(x,y,n)=>`<circle class="g-a" cx="${x}" cy="${y}" r="8"/><text class="g-n" x="${x}" y="${y+3.5}">${n}</text>`;
+const ICON={sect:'<path class="g-b" d="M13 11L4 24Q13 28 22 24Z"/><rect class="g-a" x="9" y="2" width="8" height="9" rx="2"/>',
+ lin:'<rect class="g-b" x="5" y="10" width="16" height="14"/><rect class="g-a" x="4" y="3" width="18" height="7" rx="2"/>',
+ conv:'<path class="g-b" d="M5 9Q13 14 21 9L25 23Q13 28 1 23Z"/><path class="g-a" d="M5 3H21V8Q13 13 5 8Z"/>'};
+function figHead(pts){
+  let s='<path class="g-o" d="M86 164L84 120C48 110 34 60 68 28C100 2 152 12 158 56L161 69L174 90L163 95L165 107L160 122C150 132 132 131 120 124L122 164"/>'
+   +'<path class="g-d" d="M150 128L113 116L107 94M112 80L143 82"/><ellipse class="g-o" cx="102" cy="82" rx="6" ry="10"/><circle class="g-k" cx="149" cy="72" r="2.5"/>'
+   +'<path class="g-d" d="M128 84L150 150"/><text class="g-t" x="132" y="162">arco cigomático</text>';
+  pts.forEach((k,i)=>{const p=HEADP[k];
+    if(p.length===2){s+=`<circle class="g-b" cx="${p[0]}" cy="${p[1]}" r="14"/>`+badge(p[0],p[1],i+1);return}
+    const dx=p[2]-p[0],dy=p[3]-p[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,B=62,w=13;
+    s+=`<path class="g-b" d="M${p[0]} ${p[1]}L${p[0]+ux*B-uy*w} ${p[1]+uy*B+ux*w}L${p[0]+ux*B+uy*w} ${p[1]+uy*B-ux*w}Z"/>`
+     +`<rect class="g-a" x="-8" y="-24" width="16" height="24" rx="3" transform="translate(${p[0]} ${p[1]}) rotate(${Math.atan2(uy,ux)*180/Math.PI-90})"/>`
+     +`<text class="g-n" x="${p[0]-ux*12}" y="${p[1]-uy*12+3.5}">${i+1}</text>`});
+  return `<svg viewBox="0 0 220 170" role="img" aria-label="Cabeza de perfil con la posición de la sonda">${s}</svg>`;
+}
+function figTorso(pts){
+  let s='<path class="g-o" d="M92 6L92 22C70 28 40 30 30 46C26 70 34 110 44 140C46 160 40 180 38 196M182 196C180 180 174 160 176 140C186 110 194 70 190 46C180 30 150 28 128 22L128 6"/>'
+   +'<path class="g-d" d="M110 30V98M110 30Q84 30 58 36M110 30Q136 30 162 36M110 98C90 104 66 118 48 138M110 98C130 104 154 118 172 138"/><circle class="g-k" cx="110" cy="160" r="2"/>'
+   +'<text class="g-t" x="6" y="14">Der.</text><text class="g-t" x="196" y="14">Izq.</text>';
+  pts.forEach((k,i)=>{const p=TORSOP[k],L=Math.hypot(p[2],p[3]),ux=p[2]/L,uy=p[3]/L,a=[p[0]+ux*9,p[1]+uy*9],b=[p[0]+ux*24,p[1]+uy*24];
+    s+=`<path class="g-c" d="M${a[0]} ${a[1]}L${b[0]} ${b[1]}M${b[0]-ux*6-uy*4} ${b[1]-uy*6+ux*4}L${b[0]} ${b[1]}L${b[0]-ux*6+uy*4} ${b[1]-uy*6-ux*4}"/>`+badge(p[0],p[1],i+1)});
+  return `<svg viewBox="0 0 220 200" role="img" aria-label="Torso de frente con la posición de la sonda">${s}</svg>`;
+}
+function figEye(){
+  return '<svg viewBox="0 0 220 184" role="img" aria-label="Corte del ojo con la medición de la vaina del nervio óptico">'
+   +'<rect class="g-a" x="70" y="6" width="80" height="15" rx="3"/><text class="g-t" x="156" y="17">sonda lineal</text>'
+   +'<rect class="g-d" x="62" y="21" width="96" height="9"/><text class="g-t" x="164" y="29">gel</text>'
+   +'<path class="g-o" d="M60 36Q110 24 160 36"/><text class="g-t" x="166" y="46">párpado</text>'
+   +'<circle class="g-o" cx="110" cy="80" r="42"/><ellipse class="g-o" cx="110" cy="48" rx="15" ry="6"/><text class="g-t" x="92" y="66">cristalino</text><text class="g-t" x="94" y="112">retina</text>'
+   +'<rect class="g-m" x="103" y="122" width="14" height="58"/><path class="g-o" d="M94 119V180M126 119V180"/>'
+   +'<path class="g-o" d="M142 122V146M138 122H146M138 146H146"/><text class="g-t" x="150" y="138">3 mm</text>'
+   +'<path class="g-c" d="M94 146H126M94 141V151M126 141V151"/><text class="g-t" x="88" y="150" text-anchor="end">VNO</text>'
+   +'<text class="g-t" x="88" y="174" text-anchor="end">vaina</text><text class="g-t" x="132" y="174">nervio</text></svg>';
+}
+function viewHtml(c){
+  const v=VIEWS[VMAP[c.id]]; if(!v)return '';
+  const fig=v.fig==='head'?figHead(v.pts):v.fig==='torso'?figTorso(v.pts):figEye();
+  const cap=v.fig==='head'?'Vista lateral. El círculo es una sonda apoyada de frente; el abanico muestra hacia dónde va el haz.':v.fig==='torso'?'Vista de frente. La flecha indica hacia dónde apunta el marcador de la sonda.':'Corte del ojo con la sonda arriba, como se ve en pantalla. Esquema, no a escala.';
+  return `<details><summary>Sonda y ventana</summary><div class="pv"><figure>${fig}<figcaption>${cap}</figcaption></figure><div class="tx">
+    <ul class="sondas">${v.s.map(k=>`<li><svg viewBox="0 0 26 26" aria-hidden="true">${ICON[k]}</svg>${esc(SONDAS[k])}</li>`).join('')}</ul>
+    <p><b>Preset:</b> ${esc(v.pre)}</p>${v.pos.length?`<ol>${v.pos.map(t=>`<li>${esc(t)}</li>`).join('')}</ol>`:''}<ul class="st">${v.st.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div></div></details>`;
+}
+function card(c){
+  const ins=c.i.map(x=>{
+    const id=`${c.id}-${x.k}`;
+    if(x.o)return `<label class="wide" for="${id}"><span>${esc(x.l)}</span><select id="${id}" data-k="${x.k}">${x.o.map(o=>`<option value="${o[0]}">${esc(o[1])}</option>`).join('')}</select></label>`;
+    return `<label for="${id}"><span>${esc(x.l)}${x.opt?' <small>opcional</small>':''}</span><small>${esc(x.u)}</small><input id="${id}" data-k="${x.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${x.e==null?'':fmt(x.e,String(x.e).includes('.')?String(x.e).split('.')[1].length:0)}"></label>`;
+  }).join('');
+  return `<article class="calc" data-id="${c.id}" data-s="${c.s}" data-t="${esc(norm(c.t+' '+c.sub+' '+c.i.map(x=>x.l).join(' ')+' '+c.ref))}">
+    <div class="hd"><div><h3>${esc(c.t)}</h3><p class="sub">${esc(c.sub)}</p></div><button class="clr" type="button">Borrar</button></div>
+    <div class="ins">${ins}</div>
+    <div class="read" aria-live="polite"></div>
+    <details><summary>Fórmula y fuente</summary><pre class="fx">${esc(c.fx)}</pre>${c.n?`<p>${esc(c.n)}</p>`:''}${c.ref?`<p class="ref">${esc(c.ref)}</p>`:''}<p class="ck${CK[c.id]?'':' no'}">${CK[c.id]?'Cotejado: '+esc(CK[c.id]):'Sin cotejar contra la fuente original.'}</p></details>
+    ${viewHtml(c)}
+  </article>`;
+}
+function calc(el){
+  const c=byId[el.dataset.id], v={}, miss=[]; let typed=false;
+  const nums=c.i.filter(x=>!x.o);
+  c.i.forEach(x=>{const f=el.querySelector(`[data-k="${x.k}"]`);
+    if(x.o){v[x.k]=f.value;return}
+    const s=f.value.trim().replace(',','.'); const n=s===''?NaN:Number(s);
+    if(s!=='')typed=true; v[x.k]=n; if(!x.opt&&!(n>=0&&Number.isFinite(n)))miss.push(x.l)});
+  const out=el.querySelector('.read'); let ex=false;
+  if(nums.length&&!typed){ex=true;nums.forEach(x=>v[x.k]=x.e==null?NaN:x.e)}
+  else if(miss.length){out.innerHTML=`<div class="tag">Sin resultado</div><div class="miss">Falta cargar: ${esc(miss.join(', '))}</div>`;return}
+  let rows; try{rows=c.f(v)}catch(e){rows=[]}
+  out.innerHTML=`<div class="tag">${ex?'Ejemplo · valores de muestra':'Resultado'}</div>`+rows.map(r=>`<div class="row ${r.lv}"><span class="l">${esc(r.l)}</span><span class="v">${fmt(r.v,r.d)}${r.u?`<u>${esc(r.u)}</u>`:''}</span>${r.n?`<span class="n">${esc(r.n)}</span>`:''}</div>`).join('');
+}
+function build(){
+  tabs.innerHTML=[['all','Todas']].concat(SECTIONS).map(s=>`<button type="button" data-s="${s[0]}" aria-pressed="${s[0]===cur}">${esc(s[1])}<span>${s[0]==='all'?CALCS.length:CALCS.filter(c=>c.s===s[0]).length}</span></button>`).join('');
+  main.innerHTML=SECTIONS.map(s=>`<section data-s="${s[0]}"><h2>${esc(s[1])}</h2><div class="grid">${CALCS.filter(c=>c.s===s[0]).map(card).join('')}</div></section>`).join('')+'<p class="empty" id="none" hidden>Ninguna calculadora coincide con la búsqueda.</p>';
+  main.querySelectorAll('.calc').forEach(calc); filter();
+}
+function filter(){
+  const t=norm(q.value.trim()); let any=false;
+  main.querySelectorAll('section').forEach(sec=>{let n=0;
+    sec.querySelectorAll('.calc').forEach(el=>{const ok=(t?true:(cur==='all'||el.dataset.s===cur))&&(!t||el.dataset.t.includes(t));el.hidden=!ok;if(ok)n++});
+    sec.hidden=!n; if(n)any=true});
+  $('#none').hidden=any;
+}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.s;q.value='';
+  tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  try{localStorage.setItem('eco-tab',cur)}catch(e){} filter(); window.scrollTo(0,0)});
+q.addEventListener('input',filter);
+main.addEventListener('input',e=>{const el=e.target.closest('.calc');if(el)calc(el)});
+main.addEventListener('change',e=>{const el=e.target.closest('.calc');if(el)calc(el)});
+main.addEventListener('click',e=>{if(!e.target.classList.contains('clr'))return;const el=e.target.closest('.calc');
+  el.querySelectorAll('input').forEach(i=>i.value='');el.querySelectorAll('select').forEach(s=>s.selectedIndex=0);calc(el)});
+build();
+})();
+</script>
+
+</html>
