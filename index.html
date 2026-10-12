@@ -81,6 +81,18 @@ details p{margin:6px 0}
 .ck{color:var(--ink);border-left:3px solid var(--accent-fill);padding-left:8px}
 .ck.no{color:var(--mute);border-left-color:var(--line)}
 .empty{color:var(--mute);padding:24px 0}
+.by{margin:6px 0 0;color:var(--accent);font:600 12px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+#home h2{margin-top:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:10px}
+.tile{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-height:118px;padding:14px 12px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:inherit;cursor:pointer}
+.tile:hover{border-color:var(--accent)}
+.tile svg{width:34px;height:34px}
+.tile svg path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tile b{display:block;font:600 16px/1.2 var(--cond)}
+.tile small{color:var(--mute);font:500 12px var(--mono)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--accent);color:var(--accent);background:none;border-radius:999px;padding:7px 13px;font:600 13px var(--sans);cursor:pointer}
+.calc.flash{outline:2px solid var(--accent);outline-offset:2px}
 .pv{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
 .pv figure{margin:0;flex:0 1 210px;min-width:0}
 .pv figure svg{display:block;width:100%;height:auto;background:var(--field);border:1px solid var(--line);border-radius:6px}
@@ -110,13 +122,15 @@ footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:v
   <div class="top">
     <div>
       <h1>Fórmulas de Ecografía</h1>
-      <p class="lede">Calculadoras de ecografía para terapia intensiva: DTC, eco cardio, VCI y volemia, gástrico, nutrición enteral y pulmón. Los campos vacíos muestran un ejemplo; al cargar tus mediciones el resultado pasa a ser el tuyo.</p>
+      <p class="by">Dr. Julián Pablo Vitelli · Terapia intensiva</p>
+      <p class="lede">Calculadoras de ecografía para terapia intensiva. Los campos vacíos muestran un ejemplo; al cargar tus mediciones el resultado pasa a ser el tuyo.</p>
     </div>
-    <input id="q" type="search" placeholder="Buscar: Lindegaard, PSAP, antro…" aria-label="Buscar calculadora">
+    <input id="q" type="search" placeholder="Buscar: VCI, PSAP, vaina óptica…" aria-label="Buscar calculadora">
   </div>
+  <div id="home" hidden></div>
   <div class="bar"><nav class="tabs" id="tabs" aria-label="Secciones"></nav></div>
   <main id="main"></main>
-  <footer><p><b>Desarrollada por el Dr. Julián Pablo Vitelli.</b> Ámbito de aplicación: unidad de terapia intensiva (UTI). Versión del 11 de octubre de 2026.</p><p>Herramienta de apoyo para personal de salud. No es un dispositivo médico y no diagnostica ni trata por sí misma. Los puntos de corte dependen de la población y de la técnica de cada estudio; verificá cada resultado contra la clínica y la fuente citada antes de decidir una conducta. Cada tarjeta indica si su contenido fue cotejado contra la fuente original.</p><p>La app no recolecta ni envía datos: todos los cálculos se hacen en tu dispositivo. <a href="privacidad.html">Política de privacidad</a></p></footer>
+  <footer><p><b>Desarrollada por el Dr. Julián Pablo Vitelli.</b> Ámbito de aplicación: unidad de terapia intensiva (UTI). Versión del 12 de octubre de 2026.</p><p>Herramienta de apoyo para personal de salud. No es un dispositivo médico y no diagnostica ni trata por sí misma. Los puntos de corte dependen de la población y de la técnica de cada estudio; verificá cada resultado contra la clínica y la fuente citada antes de decidir una conducta. Cada tarjeta indica si su contenido fue cotejado contra la fuente original.</p><p>La app no recolecta ni envía datos: todos los cálculos se hacen en tu dispositivo. <a href="privacidad.html">Política de privacidad</a></p></footer>
 </div>
 
 <script id="defs">
@@ -156,6 +170,21 @@ const CALCS=[
  fx:'PPC = PAM · (VFD / VM) + 14\nPIC = PAM − PPC\nBelfort–Edouard: PPC = [VM / (VM − VFD)] · (PAM − PAD)',
  n:'La fórmula de velocidad diastólica es la que adopta el consenso de Bruselas, con un umbral de 20–22 mmHg para sospechar o excluir HTE (mejor corte de su metaanálisis: 19,6 mmHg, con sensibilidad y especificidad de 0,70). En el trabajo de Schmidt la PPC estimada tuvo un límite de confianza del 95 % de hasta ±12 mmHg. El consenso desaconseja usar las variaciones de esta PIC respecto del basal para estimar cambios de PIC. Medir la PAM en el mismo momento. La fórmula de Belfort–Edouard y los cortes de PPC de 50 y 60 mmHg no figuran en el material cotejado.',
  ref:'Schmidt 2001; Czosnyka 1998; Brain ultrasonography (Intensive Care Med 2019); consenso de Bruselas B-ICONIC (Intensive Care Med 2025); Belfort 2000; Edouard 2005.'},
+{s:'neuro',id:'tccs',t:'Velocidades intracraneales y estenosis',sub:'Dúplex transcraneal color: valores normales y criterios de Baumgartner',
+ i:[Sel('a','Arteria',[['m','ACM, segmento M1'],['a','ACA, segmento A1'],['p1','ACP, segmento P1'],['p2','ACP, segmento P2'],['b','Arteria basilar'],['v','Vertebral, segmento V4']]),N('vps','Velocidad pico sistólica','cm/s',170),N('vfd','Velocidad de fin de diástole','cm/s',null,1)],
+ f(v){const D={m:[108,18,63,152,48,8,23,73,155,220],a:[91,17,53,137,40,8,18,58,120,155],p1:[60,14,27,103,28,9,11,52,100,145],p2:[63,14,37,123,30,10,17,72,null,null],b:[68,13,41,104,33,8,20,56,100,140],v:[60,16,29,95,27,9,9,50,90,120]}[v.a];
+  const [m,sd,lo,hi,dm,dsd,dlo,dhi,s1,s2]=D,x=v.vps;let lv,tx;
+  if(s2&&x>=s2){lv='crit';tx=`≥ ${s2} cm/s: estenosis ≥ 50 %`}
+  else if(s1&&x>=s1){lv='warn';tx=`≥ ${s1} cm/s: estenosis < 50 %`}
+  else if(x>hi){lv='warn';tx='Sobre el rango normal sin criterio de estenosis: considerar hiperemia, vasoespasmo o flujo colateral'}
+  else if(x<lo){lv='warn';tx='Bajo el rango normal'}
+  else{lv='ok';tx=s1?`Rango normal; criterio de estenosis desde ${s1} cm/s`:'Rango normal; sin criterio de estenosis para este segmento'}
+  const o=[R('Velocidad pico sistólica',x,0,'cm/s',lv,tx),R('Normal (media ± DE)',`${m} ± ${sd}`,0,'cm/s','',`Rango ${lo}–${hi} cm/s; media + 2 DE = ${m+2*sd} cm/s`)];
+  if(has(v.vfd)){const y=v.vfd;o.push(R('Velocidad de fin de diástole',y,0,'cm/s',y>dhi||y<dlo?'warn':'ok',`Normal ${dm} ± ${dsd} cm/s (rango ${dlo}–${dhi})`))}
+  return o},
+ fx:'Estenosis por velocidad pico sistólica (< 50 % / ≥ 50 %)\nACM-M1: ≥ 155 / ≥ 220 cm/s\nACA-A1: ≥ 120 / ≥ 155 cm/s\nACP: ≥ 100 / ≥ 145 cm/s\nBasilar: ≥ 100 / ≥ 140 cm/s\nVertebral V4: ≥ 90 / ≥ 120 cm/s',
+ n:'Criterios evaluados contra angiografía en 310 pacientes: detectaron las 31 estenosis de 50 % o más con un falso positivo, y 35 de 38 estenosis menores de 50 % con tres falsos positivos. El 10 % de las arterias normales no pudo evaluarse por ventana inadecuada. El criterio para considerar sintomática una estenosis fue una velocidad mayor que la media más 2 DE de 104 sujetos normales. Para ACP-P2 no hay criterio de estenosis. ACM, ACA y ACP se exploran por ventana transtemporal; basilar y vertebral por ventana suboccipital. El vasoespasmo y la hiperemia también aumentan la velocidad: para diferenciarlos, usar el índice de Lindegaard.',
+ ref:'Baumgartner, Mattle y Schroth 1999 (Stroke); valores normales de la tabla aportada.'},
 {s:'neuro',id:'lind',t:'Índice de Lindegaard',sub:'Vasoespasmo vs. hiperemia en circulación anterior',
  i:[N('acm','VM ACM','cm/s',150),N('aci','VM ACI extracraneal','cm/s',35)],
  f(v){const il=v.acm/v.aci;let a;
@@ -546,6 +575,7 @@ exdiaf:{s:['conv','sect'],pre:'Abdominal o cardíaco.',fig:'torso',pts:['rsc'],
  st:['Paciente en supino. En cada flanco, subir la sonda sobre el diafragma para buscar líquido pleural.','Si el primer examen es negativo y la sospecha persiste, repetirlo.']}
 };
 const CK={
+tccs:'puntos de corte de estenosis de 50 % o más y menor de 50 % para las cinco arterias (Baumgartner 1999, resumen en PubMed). Los valores normales provienen de la tabla que aportaste y no se cotejaron contra el original.',
 fast:'rendimiento diagnóstico de cada componente y su uso para confirmar y no para descartar (Netherton 2019; Stengel 2018; Kirkpatrick 2004; resúmenes en PubMed). Las ventanas y la técnica son las habituales y no se cotejaron contra un texto.',
 falls:'los siete pasos, el umbral de 18 mmHg, el perfil FALLS, su rendimiento y sus limitaciones (Lichtenstein y Bar 2024, texto completo).',
 epss:'fórmula 75,5 − 2,5·distancia, exclusiones y corte de 7 mm (Silverstein 2006; McKaigney 2014; resúmenes en PubMed).',
@@ -571,7 +601,7 @@ vno:'técnica, umbral de 6 mm, rango de cortes, relación VNO/globo y fórmula 5
 dlm:'fórmula (A − B)/2, plano de medición y referencia de 5 mm (Brain ultrasonography 2019).',
 antro:'fórmula de área, modelo de Perlas con su rango de validez, umbral de 1,5 mL/kg, técnica y cortes de área en terapia intensiva (Pérez-Calatayud 2023; Weidner 2026; Ruiz Ávila 2025; Elbardan 2025; Wang 2022).',
 lind:'solo la definición del índice y la ventana submandibular (Brain ultrasonography 2019). Los puntos de corte no figuran en el material: sin cotejar.'};
-const VMAP={ip:'tt',pic:'tt',ppc:'tt',lind:'lind',sviri:'sviri',vno:'vno',dlm:'dlm',gc:'tsvi',ea:'tsvi',teich:'plax',masa:'plax',simp:'ap2',psap:'vd',tapse:'vd',tac:'tsvd',rvp:'tsvd',diast:'mitral',pht:'mitral',pisa:'mitral',dpdt:'mitral',qpqs:'qpqs',vci:'vci',dv:'a5c',pla:'a5c',vexus:'vexus',porta:'vexus',antro:'antro',antroped:'antroped',balik:'pleura',diaf:'diaf',elip:'vejiga',irr:'renal',vrg:'antro',aant:'antro',lai:'colon',umat:'umat',ams:'ams',guts:'colon',mi:'antro',epss:'plax',mapse:'mapse',fac:'vd',vdf:'vd',blue:'blue',exdiaf:'exdiaf',falls:'falls',fast:'fast'};
+const VMAP={ip:'tt',pic:'tt',ppc:'tt',lind:'lind',tccs:'tt',sviri:'sviri',vno:'vno',dlm:'dlm',gc:'tsvi',ea:'tsvi',teich:'plax',masa:'plax',simp:'ap2',psap:'vd',tapse:'vd',tac:'tsvd',rvp:'tsvd',diast:'mitral',pht:'mitral',pisa:'mitral',dpdt:'mitral',qpqs:'qpqs',vci:'vci',dv:'a5c',pla:'a5c',vexus:'vexus',porta:'vexus',antro:'antro',antroped:'antroped',balik:'pleura',diaf:'diaf',elip:'vejiga',irr:'renal',vrg:'antro',aant:'antro',lai:'colon',umat:'umat',ams:'ams',guts:'colon',mi:'antro',epss:'plax',mapse:'mapse',fac:'vd',vdf:'vd',blue:'blue',exdiaf:'exdiaf',falls:'falls',fast:'fast'};
 if(typeof module!=='undefined')module.exports={CALCS,has,VIEWS,VMAP,CK};
 </script>
 
@@ -582,9 +612,11 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const fmt=(x,d)=>typeof x==='string'?x:Number.isFinite(x)?x.toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const byId=Object.fromEntries(CALCS.map(c=>[c.id,c]));
-let cur='all';
-try{cur=localStorage.getItem('eco-tab')||'all'}catch(e){}
+let cur='home';
 const h=location.hash.slice(1); if(h&&(h==='all'||SECTIONS.some(s=>s[0]===h)))cur=h;
+const home=$('#home'), bar=$('.bar');
+const ICONS={neuro:'M10 30V24C4 22 3 12 9 7C15 2 26 4 27 13L29 18L26 19L26 24L20 25V30',cardio:'M17 29C6 21 3 15 5 10C7 5 14 5 17 10C20 5 27 5 29 10C31 15 28 21 17 29Z',vol:'M8 4V30M26 4V30M8 12Q17 16 26 12M8 22Q17 18 26 22',gast:'M12 4V10C6 12 5 22 11 27C17 31 27 29 28 21C29 15 22 15 20 19C18 22 14 18 18 12',nut:'M17 4C17 4 8 15 8 21A9 9 0 0 0 26 21C26 15 17 4 17 4Z',otros:'M17 4V16M17 12L12 16C6 18 4 30 9 30C14 30 14 22 14 16M17 12L22 16C28 18 30 30 25 30C20 30 20 22 20 16'};
+const PROTOS=[['blue','BLUE'],['falls','FALLS'],['fast','FAST / eFAST'],['vexus','VExUS']];
 
 const HEADP={tt:[119,63],sm:[116,132,119,74],so:[79,122,160,68]};
 const TORSOP={pls:[124,74,-1,-1],pss:[124,74,1,-1],ap:[152,106,1,0],sub:[110,110,0,-1],epi:[104,116,0,-1],rax:[36,100,0,-1],ren:[42,144,0,-1],zap:[35,98,0,-1],sp:[110,184,-1,0],bua:[72,60,0,-1],bla:[74,90,0,-1],rsc:[82,124,0,-1],lfl:[184,104,0,-1],lua:[148,60,0,-1],rcol:[42,140,0,-1],lcol:[178,140,0,-1]};
@@ -659,7 +691,8 @@ function calc(el){
   out.innerHTML=`<div class="tag">${ex?'Ejemplo · valores de muestra':'Resultado'}</div>`+rows.map(r=>`<div class="row ${r.lv}"><span class="l">${esc(r.l)}</span><span class="v">${fmt(r.v,r.d)}${r.u?`<u>${esc(r.u)}</u>`:''}</span>${r.n?`<span class="n">${esc(r.n)}</span>`:''}</div>`).join('');
 }
 function build(){
-  tabs.innerHTML=[['all','Todas']].concat(SECTIONS).map(s=>`<button type="button" data-s="${s[0]}" aria-pressed="${s[0]===cur}">${esc(s[1])}<span>${s[0]==='all'?CALCS.length:CALCS.filter(c=>c.s===s[0]).length}</span></button>`).join('');
+  tabs.innerHTML=[['home','Inicio'],['all','Todas']].concat(SECTIONS).map(s=>`<button type="button" data-s="${s[0]}" aria-pressed="${s[0]===cur}">${esc(s[1])}${s[0]==='home'?'':`<span>${s[0]==='all'?CALCS.length:CALCS.filter(c=>c.s===s[0]).length}</span>`}</button>`).join('');
+  home.innerHTML='<h2>Secciones</h2><div class="tiles">'+SECTIONS.map(s=>{const n=CALCS.filter(c=>c.s===s[0]).length;return `<button type="button" class="tile" data-go="${s[0]}"><svg viewBox="0 0 34 34" aria-hidden="true"><path d="${ICONS[s[0]]}"/></svg><span><b>${esc(s[1])}</b><small>${n} ${n===1?'calculadora':'calculadoras'}</small></span></button>`}).join('')+'</div><h2>Protocolos</h2><div class="chips">'+PROTOS.map(p=>`<button type="button" class="chip" data-card="${p[0]}">${esc(p[1])}</button>`).join('')+'</div>';
   main.innerHTML=SECTIONS.map(s=>`<section data-s="${s[0]}"><h2>${esc(s[1])}</h2><div class="grid">${CALCS.filter(c=>c.s===s[0]).map(card).join('')}</div></section>`).join('')+'<p class="empty" id="none" hidden>Ninguna calculadora coincide con la búsqueda.</p>';
   main.querySelectorAll('.calc').forEach(calc); filter();
 }
@@ -669,10 +702,13 @@ function filter(){
     sec.querySelectorAll('.calc').forEach(el=>{const ok=(t?true:(cur==='all'||el.dataset.s===cur))&&(!t||el.dataset.t.includes(t));el.hidden=!ok;if(ok)n++});
     sec.hidden=!n; if(n)any=true});
   $('#none').hidden=any;
+  const showHome=cur==='home'&&!t; home.hidden=!showHome; main.hidden=showHome; bar.hidden=showHome;
 }
-tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.s;q.value='';
-  tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
-  try{localStorage.setItem('eco-tab',cur)}catch(e){} filter(); window.scrollTo(0,0)});
+function go(s){cur=s;q.value='';tabs.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.s===s));filter();window.scrollTo(0,0)}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.s)});
+home.addEventListener('click',e=>{const t=e.target.closest('[data-go]'),c=e.target.closest('[data-card]');
+  if(t)go(t.dataset.go);
+  if(c){const el=main.querySelector(`.calc[data-id="${c.dataset.card}"]`);if(!el)return;go(el.dataset.s);el.scrollIntoView({block:'start'});window.scrollBy(0,-70);el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1600)}});
 q.addEventListener('input',filter);
 main.addEventListener('input',e=>{const el=e.target.closest('.calc');if(el)calc(el)});
 main.addEventListener('change',e=>{const el=e.target.closest('.calc');if(el)calc(el)});
