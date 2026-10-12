@@ -326,11 +326,11 @@ const CALCS=[
  ref:'Lang 2015.'},
 /* ---------- VCI / VOLEMIA ---------- */
 {s:'vol',id:'vci',t:'Vena cava inferior',sub:'Colapsabilidad, distensibilidad y PAD estimada',
- i:[N('mx','Diámetro máximo','cm',2.0),N('mn','Diámetro mínimo','cm',1.2),Sel('m','Ventilación',[['e','Espontánea'],['v','Mecánica controlada']])],
- f(v){const c=(v.mx-v.mn)/v.mx*100,d=(v.mx-v.mn)/v.mn*100,f=(v.mx-v.mn)/((v.mx+v.mn)/2)*100;
+ i:[N('mx','Diámetro máximo','cm o mm',2.0),N('mn','Diámetro mínimo','cm o mm',1.2),Sel('m','Ventilación',[['e','Espontánea'],['v','Mecánica controlada']])],
+ f(v){const mm=v.mx>5;if(mm)v={...v,mx:v.mx/10,mn:v.mn/10};const U=o=>mm?o.concat([R('Unidades','mm',0,'','warn','Valores cargados en milímetros: se convirtieron a centímetros para la PAD')]):o;const c=(v.mx-v.mn)/v.mx*100,d=(v.mx-v.mn)/v.mn*100,f=(v.mx-v.mn)/((v.mx+v.mn)/2)*100;
   if(v.m==='e'){const p=v.mx<=2.1&&c>50?[3,'0–5']:v.mx>2.1&&c<50?[15,'10–20']:[8,'5–10'];
-   return[R('Índice de colapsabilidad',c,0,'%',c>40?'ok':'',c>40?'> 40 %: respuesta a fluidos probable':'≤ 40 %: no descarta respuesta a fluidos'),R('PAD estimada',p[0],0,'mmHg',p[0]===15?'warn':'',`Rango ${p[1]} mmHg (criterio ASE, sin cotejar)`)]}
-  return[R('Índice de distensibilidad',d,0,'%',d>18?'ok':'',d>18?'> 18 %: probable respondedor a fluidos':'≤ 18 %: probable no respondedor'),R('ΔVCI (sobre el promedio)',f,0,'%',f>12?'ok':'',f>12?'> 12 %: probable respondedor':'≤ 12 %'),R('Colapsabilidad',c,0,'%')]},
+   return U([R('Índice de colapsabilidad',c,0,'%',c>40?'ok':'',c>40?'> 40 %: respuesta a fluidos probable':'≤ 40 %: no descarta respuesta a fluidos'),R('PAD estimada',p[0],0,'mmHg',p[0]===15?'warn':'',`Rango ${p[1]} mmHg (criterio ASE, sin cotejar)`)])}
+  return U([R('Índice de distensibilidad',d,0,'%',d>18?'ok':'',d>18?'> 18 %: probable respondedor a fluidos':'≤ 18 %: probable no respondedor'),R('ΔVCI (sobre el promedio)',f,0,'%',f>12?'ok':'',f>12?'> 12 %: probable respondedor':'≤ 12 %'),R('Colapsabilidad',c,0,'%')])},
  fx:'Colapsabilidad = (Dmáx − Dmín) / Dmáx\nDistensibilidad = (Dmáx − Dmín) / Dmín\nΔVCI = (Dmáx − Dmín) / [(Dmáx + Dmín) / 2]\n\nPAD (ASE): ≤ 2,1 cm y colapso > 50 % → 3 mmHg\n           > 2,1 cm y colapso < 50 % → 15 mmHg\n           resto → 8 mmHg',
  n:'Ventilación espontánea: en el estudio de Muller la VCI se midió en eje largo subcostal, con modo M a 2–3 cm de la aurícula derecha, tomando máximo y mínimo de un mismo ciclo respiratorio. El mejor corte fue 40 %, con área bajo la curva de 0,77, valor predictivo positivo de 72 % y negativo de 83 %; los autores concluyen que no predice de forma confiable y que un valor bajo no descarta respuesta a fluidos. Ventilación mecánica: un metaanálisis de 8 estudios halló un umbral medio de variación de 15,4 % (IC 95 % 13,3–17,6) con área bajo la curva de 0,83, por debajo de la variación de presión de pulso y de volumen sistólico; las dos formas de calcular la variación se aceptan por igual. Los cortes de 18 % y 12 % y la estimación de PAD siguen sin cotejar contra sus originales.',
  ref:'Muller 2012 (Crit Care); Chaves 2024 (Crit Care); Barbier 2004; Feissel 2004; Rudski 2010.'},
